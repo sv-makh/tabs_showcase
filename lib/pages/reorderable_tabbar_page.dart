@@ -55,7 +55,7 @@ class _ReorderableTabBarPageState extends State<ReorderableTabBarPage> {
           child: const Icon(Icons.add),
           onPressed: () {
             tabs.add((tabs.length + 1).toString());
-            views.add(Icon(Icons.add, size: 60,));
+            views.add(const Icon(Icons.add, size: 60,));
             setState(() {});
           },
         ),

@@ -12,7 +12,7 @@ class DefaultPage extends StatelessWidget {
       length: tabTitles.length,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('default'),
+          title: const Text('default'),
           bottom: TabBar(
             tabs: List.generate(
               tabTitles.length,

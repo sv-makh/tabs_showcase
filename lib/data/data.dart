@@ -8,8 +8,8 @@ List<String> tabTitles = [
 ];
 
 List<Icon> tabViews = [
-  Icon(Icons.home, size: 60),
-  Icon(Icons.star, size: 60),
-  Icon(Icons.person, size: 60),
-  Icon(Icons.handyman, size: 60),
+  const Icon(Icons.home, size: 60),
+  const Icon(Icons.star, size: 60),
+  const Icon(Icons.person, size: 60),
+  const Icon(Icons.handyman, size: 60),
 ];

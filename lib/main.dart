@@ -26,13 +26,13 @@ class MyApp extends StatelessWidget {
       //home: const MyHomePage(),
       initialRoute: '/',
       routes: {
-        '/': (context) => MyHomePage(),
-        '/default': (context) => DefaultPage(),
-        '/tabbed_view': (context) => TabbedViewPage(),
-        '/contained_tab_bar_view_with_custom_page_navigator': (context) => ContainedTabBarPage(),
-        '/reorderable_tabbar': (context) => ReorderableTabBarPage(),
-        '/extended_tabs': (context) => ExtendedTabsPage(),
-        '/tab_container': (context) => TabContainerPage(),
+        '/': (context) => const MyHomePage(),
+        '/default': (context) => const DefaultPage(),
+        '/tabbed_view': (context) => const TabbedViewPage(),
+        '/contained_tab_bar_view_with_custom_page_navigator': (context) => const ContainedTabBarPage(),
+        '/reorderable_tabbar': (context) => const ReorderableTabBarPage(),
+        '/extended_tabs': (context) => const ExtendedTabsPage(),
+        '/tab_container': (context) => const TabContainerPage(),
       },
     );
   }

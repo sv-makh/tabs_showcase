@@ -15,13 +15,13 @@ class ContainedTabBarPage extends StatelessWidget {
         MediaQuery.of(context).size.width / tabTitles.length - 16;
     double tabTitleHeight = 60;
 
-    GlobalKey<ContainedTabBarViewState> _key = GlobalKey();
+    GlobalKey<ContainedTabBarViewState> key = GlobalKey();
 
     String initialValue = tabTitles[0];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('contained_tab_bar_view_with_custom_page_navigator'),
+        title: const Text('contained_tab_bar_view_with_custom_page_navigator'),
       ),
       body: Column(
         children: [
@@ -29,16 +29,16 @@ class ContainedTabBarPage extends StatelessWidget {
             children: [
               IconButton(
                 onPressed: () {
-                  _key.currentState?.previous();
+                  key.currentState?.previous();
                 },
-                icon: Icon(Icons.arrow_back_ios),
+                icon: const Icon(Icons.arrow_back_ios),
               ),
               IconButton(
                   onPressed: () {
-                    _key.currentState?.next();
+                    key.currentState?.next();
                   },
-                  icon: Icon(Icons.arrow_forward_ios)),
-              Spacer(),
+                  icon: const Icon(Icons.arrow_forward_ios)),
+              const Spacer(),
               SizedBox(
                 width: 300,
                 child: DropdownButton<String>(
@@ -55,17 +55,17 @@ class ContainedTabBarPage extends StatelessWidget {
                   }).toList(),
                   onChanged: (value) {
                     initialValue = value!;
-                    _key.currentState?.animateTo(tabTitles.indexOf(value));
+                    key.currentState?.animateTo(tabTitles.indexOf(value));
                   },
                 ),
               ),
             ],
           ),
-          SizedBox(height: 10,),
-          Container(
+          const SizedBox(height: 10,),
+          SizedBox(
             height: MediaQuery.of(context).size.height - 200,
             child: ContainedTabBarView(
-              key: _key,
+              key: key,
               tabs: [
                 ...tabTitles
                     .map(
@@ -74,11 +74,11 @@ class ContainedTabBarPage extends StatelessWidget {
                         child: Container(
                           width: tabTitleWidth,
                           height: tabTitleHeight,
-                          padding: EdgeInsets.only(left: 4, right: 4),
+                          padding: const EdgeInsets.only(left: 4, right: 4),
                           decoration: BoxDecoration(
                             color: Colors.transparent,
                             border: Border.all(color: Colors.grey[600]!),
-                            borderRadius: BorderRadius.all(
+                            borderRadius: const BorderRadius.all(
                               Radius.circular(4.0),
                             ),
                           ),

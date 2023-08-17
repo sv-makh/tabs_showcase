@@ -34,7 +34,7 @@ class _TabbedViewPageState extends State<TabbedViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('tabbed_view'),),
+      appBar: AppBar(title: const Text('tabbed_view'),),
       body: TabbedViewTheme(
           data: TabbedViewThemeData.mobile(),
           child: TabbedView(controller: _controller),

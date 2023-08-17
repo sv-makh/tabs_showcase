@@ -14,10 +14,10 @@ class ExtendedTabsPage extends StatelessWidget {
       length: tabTitles.length,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('extended_tabs'),
+          title: const Text('extended_tabs'),
           bottom: ExtendedTabBar(
             labelColor: Colors.black,
-            indicator: ColorTabIndicator(Colors.blue),
+            indicator: const ColorTabIndicator(Colors.blue),
             scrollDirection: Axis.horizontal,
             tabs: List.generate(
               tabTitles.length,
