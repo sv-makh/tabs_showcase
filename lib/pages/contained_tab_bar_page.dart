@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../data/data.dart';
 
 //https://pub.dev/packages/contained_tab_bar_view_with_custom_page_navigator
+//аналогичен более старому https://pub.dev/packages/contained_tab_bar_view
 
 class ContainedTabBarPage extends StatelessWidget {
   const ContainedTabBarPage({super.key});
@@ -11,10 +12,7 @@ class ContainedTabBarPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double tabTitleWidth =
-        MediaQuery
-            .of(context)
-            .size
-            .width / tabTitles.length - 16;
+        MediaQuery.of(context).size.width / tabTitles.length - 16;
     double tabTitleHeight = 60;
 
     GlobalKey<ContainedTabBarViewState> _key = GlobalKey();
@@ -27,18 +25,43 @@ class ContainedTabBarPage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          DropdownButton<String>(
-            value: initialValue,
-            items: tabTitles.map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value, overflow: TextOverflow.ellipsis,),
-              );
-            }).toList(),
-            onChanged: (value) {
-              initialValue = value!;
-              _key.currentState?.animateTo(tabTitles.indexOf(value));
-            },),
+          Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  _key.currentState?.previous();
+                },
+                icon: Icon(Icons.arrow_back_ios),
+              ),
+              IconButton(
+                  onPressed: () {
+                    _key.currentState?.next();
+                  },
+                  icon: Icon(Icons.arrow_forward_ios)),
+              Spacer(),
+              SizedBox(
+                width: 300,
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  value: initialValue,
+                  items: tabTitles.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        overflow: TextOverflow.visible,
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    initialValue = value!;
+                    _key.currentState?.animateTo(tabTitles.indexOf(value));
+                  },
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10,),
           Container(
             height: MediaQuery.of(context).size.height - 200,
             child: ContainedTabBarView(
@@ -46,8 +69,7 @@ class ContainedTabBarPage extends StatelessWidget {
               tabs: [
                 ...tabTitles
                     .map(
-                      (e) =>
-                      Tooltip(
+                      (e) => Tooltip(
                         message: e,
                         child: Container(
                           width: tabTitleWidth,
@@ -62,20 +84,17 @@ class ContainedTabBarPage extends StatelessWidget {
                           ),
                           child: Center(
                               child: Text(
-                                e,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              )),
+                            e,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          )),
                         ),
                       ),
-                )
+                    )
                     .toList(),
               ],
               tabBarProperties: TabBarProperties(
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width,
+                width: MediaQuery.of(context).size.width,
                 height: tabTitleHeight + 10,
                 position: TabBarPosition.top,
                 background: Container(
@@ -94,8 +113,7 @@ class ContainedTabBarPage extends StatelessWidget {
             ),
           ),
         ],
-      )
-      ,
+      ),
     );
   }
 }

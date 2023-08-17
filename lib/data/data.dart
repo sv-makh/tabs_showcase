@@ -8,8 +8,8 @@ List<String> tabTitles = [
 ];
 
 List<Icon> tabViews = [
-  Icon(Icons.one_k, size: 60),
-  Icon(Icons.two_k, size: 60),
-  Icon(Icons.three_k, size: 60),
-  Icon(Icons.four_k, size: 60),
+  Icon(Icons.home, size: 60),
+  Icon(Icons.star, size: 60),
+  Icon(Icons.person, size: 60),
+  Icon(Icons.handyman, size: 60),
 ];
