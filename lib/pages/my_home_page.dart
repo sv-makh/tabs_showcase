@@ -27,7 +27,10 @@ class MyHomePage extends StatelessWidget {
             }, child: const Text('contained_tab_bar_view_with_custom_page_navigator')),
             TextButton(onPressed: () {
               Navigator.pushNamed(context, '/reorderable_tabbar');
-            }, child: const Text('reorderable_tabbar'))
+            }, child: const Text('reorderable_tabbar')),
+            TextButton(onPressed: () {
+              Navigator.pushNamed(context, '/extended_tabs');
+            }, child: const Text('extended_tabs')),
           ],
         ),
       ),

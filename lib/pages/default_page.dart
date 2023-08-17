@@ -9,7 +9,7 @@ class DefaultPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: tabTitles.length,
       child: Scaffold(
         appBar: AppBar(
           title: Text('default'),
