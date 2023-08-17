@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:tabs_showcase/data/data.dart';
 import 'package:tabs_showcase/widget/tab_filling.dart';
 
+//https://pub.dev/packages/extended_tabs
+
 class ExtendedTabsPage extends StatelessWidget {
   const ExtendedTabsPage({super.key});
 

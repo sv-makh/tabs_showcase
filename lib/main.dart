@@ -4,6 +4,7 @@ import 'package:tabs_showcase/pages/default_page.dart';
 import 'package:tabs_showcase/pages/extended_tabs_page.dart';
 import 'package:tabs_showcase/pages/my_home_page.dart';
 import 'package:tabs_showcase/pages/reorderable_tabbar_page.dart';
+import 'package:tabs_showcase/pages/tab_container_page.dart';
 import 'package:tabs_showcase/pages/tabbed_view_page.dart';
 
 void main() {
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         '/contained_tab_bar_view_with_custom_page_navigator': (context) => ContainedTabBarPage(),
         '/reorderable_tabbar': (context) => ReorderableTabBarPage(),
         '/extended_tabs': (context) => ExtendedTabsPage(),
+        '/tab_container': (context) => TabContainerPage(),
       },
     );
   }

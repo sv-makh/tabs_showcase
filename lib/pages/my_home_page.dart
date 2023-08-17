@@ -31,6 +31,9 @@ class MyHomePage extends StatelessWidget {
             TextButton(onPressed: () {
               Navigator.pushNamed(context, '/extended_tabs');
             }, child: const Text('extended_tabs')),
+            TextButton(onPressed: () {
+              Navigator.pushNamed(context, '/tab_container');
+            }, child: const Text('tab_container')),
           ],
         ),
       ),

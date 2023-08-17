@@ -39,6 +39,7 @@ dependencies:
   contained_tab_bar_view_with_custom_page_navigator: ^0.1.3
   reorderable_tabbar: ^1.0.5
   extended_tabs: ^4.1.0
+  tab_container: ^2.0.0
 
 dev_dependencies:
   flutter_test:
