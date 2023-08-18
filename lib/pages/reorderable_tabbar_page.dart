@@ -13,7 +13,6 @@ class ReorderableTabBarPage extends StatefulWidget {
 }
 
 class _ReorderableTabBarPageState extends State<ReorderableTabBarPage> {
-  PageController pageController = PageController();
 
   List<String> tabs = List.from(tabTitles);
   List<Icon> views = List.from(tabViews);
@@ -27,7 +26,12 @@ class _ReorderableTabBarPageState extends State<ReorderableTabBarPage> {
       length: tabs.length,
       child: Scaffold(
         appBar: AppBar(
-          elevation: 0,
+          //elevation: 0,
+          actions: [
+            IconButton(onPressed: () {
+              //tabs.removeAt(index)
+            }, icon: Icon(Icons.delete)),
+          ],
           title: const Text("reorderable_tabbar"),
           bottom: ReorderableTabBar(
             buildDefaultDragHandles: false,
@@ -54,7 +58,7 @@ class _ReorderableTabBarPageState extends State<ReorderableTabBarPage> {
         floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),
           onPressed: () {
-            tabs.add((tabs.length + 1).toString());
+            tabs.add('${(tabs.length + 1).toString()}th tab');
             views.add(const Icon(Icons.add, size: 60,));
             setState(() {});
           },
