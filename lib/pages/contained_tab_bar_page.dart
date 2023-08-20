@@ -27,41 +27,38 @@ class _ContainedTabBarPageState extends State<ContainedTabBarPage> {
     double tabTitleWidth = MediaQuery.of(context).size.width / tabs.length - 16;
     double tabTitleHeight = 60;
 
-    //GlobalKey<ContainedTabBarViewState> key = GlobalKey();
-
-    String initialValue = tabTitles[0];
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('contained_tab_bar_view_with_custom_page_navigator'),
       ),
       body: Column(
         children: [
-          Stack(
-            children: [
-              Positioned(
-                right: 0,
-                top: 5,
-                child: Row(
-                  children: [
-                    _addButton(),
-                    _menuAnchor(),
-                  ],
-                ),
+          Stack(children: [
+            Positioned(
+              right: 0,
+              top: 5,
+              child: Row(
+                children: [
+                  _addButton(),
+                  _menuAnchor(),
+                ],
               ),
-              SizedBox(
+            ),
+            SizedBox(
               height: MediaQuery.of(context).size.height - 200,
               child: ContainedTabBarView(
                 key: key,
                 tabs: tabs
-                    .map((e) => TabFillingSized(
-                          title: e,
-                          width: tabTitleWidth,
-                          height: tabTitleHeight,
-                          onDelete: () {
-                            _deleteTab(e);
-                          },
-                        ))
+                    .map(
+                      (e) => TabFillingSized(
+                        title: e,
+                        width: tabTitleWidth,
+                        height: tabTitleHeight,
+                        onDelete: () {
+                          _deleteTab(e);
+                        },
+                      ),
+                    )
                     .toList(),
                 tabBarProperties: TabBarProperties(
                   padding: EdgeInsets.only(right: menuButtonSize * 2),
@@ -69,11 +66,11 @@ class _ContainedTabBarPageState extends State<ContainedTabBarPage> {
                   height: tabTitleHeight,
                   position: TabBarPosition.top,
                 ),
-                views: views,
+                views: views.toList(),
                 onChange: (index) => print(index),
               ),
-            ),]
-          ),
+            ),
+          ]),
         ],
       ),
     );
@@ -97,7 +94,6 @@ class _ContainedTabBarPageState extends State<ContainedTabBarPage> {
             Icons.add,
             size: 60,
           ));
-          //_controller = TabController(length: tabs.length, vsync: this);
           setState(() {});
         },
         icon: Icon(Icons.add),

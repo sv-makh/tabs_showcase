@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reorderable_tabbar/reorderable_tabbar.dart';
 import 'package:tabs_showcase/data/data.dart';
-import 'package:tabs_showcase/widget/tab_filling.dart';
-
 import '../widget/tab_filling_sized.dart';
 
 //https://pub.dev/packages/reorderable_tabbar
