@@ -3,6 +3,8 @@ import 'package:reorderable_tabbar/reorderable_tabbar.dart';
 import 'package:tabs_showcase/data/data.dart';
 import 'package:tabs_showcase/widget/tab_filling.dart';
 
+import '../widget/tab_filling_sized.dart';
+
 //https://pub.dev/packages/reorderable_tabbar
 
 class ReorderableTabBarPage extends StatefulWidget {
@@ -15,7 +17,6 @@ class ReorderableTabBarPage extends StatefulWidget {
 class _ReorderableTabBarPageState extends State<ReorderableTabBarPage>
     with TickerProviderStateMixin {
   late TabController _controller;
-  int _selectedIndex = 0;
 
   List<String> tabs = List.from(tabTitles);
   List<Icon> views = List.from(tabViews);
@@ -24,6 +25,8 @@ class _ReorderableTabBarPageState extends State<ReorderableTabBarPage>
   bool tabSizeIsLabel = false;
 
   String initialValue = tabTitles[0];
+
+  double menuButtonSize = 35;
 
   @override
   void initState() {
@@ -39,15 +42,82 @@ class _ReorderableTabBarPageState extends State<ReorderableTabBarPage>
 
   @override
   Widget build(BuildContext context) {
-    //String initialValue = tabs[0];
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("reorderable_tabbar"),
-        /*bottom: ReorderableTabBar(*/
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
+      body: Column(
+        children: [
+          Stack(children: [
+            Positioned(
+              right: 0,
+              top: 5,
+              child: Row(
+                children: [
+                  _addButton(),
+                  _menuAnchor(),
+                ],
+              ),
+            ),
+            ReorderableTabBar(
+              controller: _controller,
+              buildDefaultDragHandles: false,
+              tabs: tabs
+                  .map((e) => ReorderableDragStartListener(
+                        index: tabs.indexOf(e),
+                        child: TabFillingSized(
+                          width:
+                              MediaQuery.of(context).size.width / tabs.length,
+                          height: menuButtonSize,
+                          title: e,
+                          onDelete: () {
+                            _deleteTab(e);
+                          },
+                        ),
+                      ))
+                  .toList(),
+              padding: EdgeInsets.only(right: 2 * menuButtonSize),
+              labelPadding: EdgeInsets.all(8),
+              indicatorSize: tabSizeIsLabel ? TabBarIndicatorSize.label : null,
+              reorderingTabBackgroundColor: Colors.black45,
+              indicatorWeight: 5,
+              tabBorderRadius: const BorderRadius.vertical(
+                top: Radius.circular(8),
+              ),
+              onReorder: (oldIndex, newIndex) async {
+                String temp = tabs.removeAt(oldIndex);
+                Icon tempIcon = views.removeAt(oldIndex);
+                tabs.insert(newIndex, temp);
+                views.insert(newIndex, tempIcon);
+                setState(() {});
+              },
+            ),
+          ]),
+          SizedBox(
+            height: MediaQuery.of(context).size.height - 200,
+            child: TabBarView(
+              controller: _controller,
+              children: views.toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _deleteTab(String tab) {
+    int index = tabs.indexOf(tab);
+    tabs.removeAt(index);
+    views.removeAt(index);
+    _controller = TabController(length: tabs.length, vsync: this);
+    setState(() {});
+  }
+
+  Widget _addButton() {
+    return SizedBox(
+      width: menuButtonSize,
+      height: menuButtonSize,
+      child: IconButton(
         onPressed: () {
           tabs.add('${(tabs.length + 1).toString()}th tab');
           views.add(const Icon(
@@ -57,92 +127,68 @@ class _ReorderableTabBarPageState extends State<ReorderableTabBarPage>
           _controller = TabController(length: tabs.length, vsync: this);
           setState(() {});
         },
+        icon: Icon(Icons.add),
       ),
-      body: Column(
-        children: [
-          Row(children: [
-            IconButton(
-              onPressed: () {
-                //_controller.prev();
-              },
-              icon: const Icon(Icons.arrow_back_ios),
-            ),
-            IconButton(
-                onPressed: () {
-                  //_controller.next();
-                },
-                icon: const Icon(Icons.arrow_forward_ios),),
-            IconButton(onPressed: () {
-                tabs.removeAt(_controller.index);
-                views.removeAt(_controller.index);
-                if (tabs.isNotEmpty) initialValue = tabs[0];
-                _controller = TabController(length: tabs.length, vsync: this);
-                setState(() {  });
-            }, icon: Icon(Icons.delete),),
-/*            const Spacer(),
-            SizedBox(
-              width: 300,
-              child: DropdownButton<String>(
-                isExpanded: true,
-                value: initialValue,
-                items: tabs.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(
-                      value,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  initialValue = value!;
-                  _controller.animateTo(tabs.indexOf(value));
-                  setState(() {});
-                  //_controller.jumpTo(tabTitles.indexOf(value));
-                },
-              ),
-            ),*/
-          ],),
-          ReorderableTabBar(
-            controller: _controller,
-            buildDefaultDragHandles: false,
-            tabs: tabs
-                .map((e) => ReorderableDragStartListener(
-              index: tabs.indexOf(e),
-              child: TabFilling(title: e, onDelete: () {
-                int index = tabs.indexOf(e);
-                tabs.removeAt(index);
-                views.removeAt(index);
-                if (tabs.isNotEmpty) initialValue = tabs[0];
-                _controller = TabController(length: tabs.length, vsync: this);
-                setState(() { });
-              },),
-            ))
-                .toList(),
-            indicatorSize: tabSizeIsLabel ? TabBarIndicatorSize.label : null,
-            isScrollable: isScrollable,
-            reorderingTabBackgroundColor: Colors.black45,
-            indicatorWeight: 5,
-            tabBorderRadius: const BorderRadius.vertical(
-              top: Radius.circular(8),
-            ),
-            onReorder: (oldIndex, newIndex) async {
-              String temp = tabs.removeAt(oldIndex);
-              Icon tempIcon = views.removeAt(oldIndex);
-              tabs.insert(newIndex, temp);
-              views.insert(newIndex, tempIcon);
-              setState(() {});
+    );
+  }
+
+  Widget _menuAnchor() {
+    return SizedBox(
+      width: menuButtonSize,
+      height: menuButtonSize,
+      child: MenuAnchor(
+        builder: (BuildContext context, MenuController menuController,
+            Widget? child) {
+          return IconButton(
+            onPressed: () {
+              if (menuController.isOpen) {
+                menuController.close();
+              } else {
+                menuController.open();
+              }
             },
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height - 300,
-            child: TabBarView(
-              controller: _controller,
-              children: views.toList(),
+            icon: const Icon(Icons.more_vert),
+            tooltip: 'MenuAnchor',
+          );
+        },
+        menuChildren: tabs.map((e) {
+          return MenuItemButton(
+            child: SizedBox(
+              width: 300,
+              child: Text(
+                e,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          ),
-        ],
+            onPressed: () {
+              _controller.animateTo(tabs.indexOf(e));
+            },
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _menuPopup() {
+    return SizedBox(
+      width: menuButtonSize,
+      height: menuButtonSize,
+      child: PopupMenuButton(
+        tooltip: 'PopupMenuButton',
+        itemBuilder: (context) => tabs.map((e) {
+          return PopupMenuItem(
+            value: e,
+            child: Text(
+              e,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          );
+        }).toList(),
+        onSelected: (value) {
+          _controller.animateTo(tabs.indexOf(value));
+        },
       ),
     );
   }

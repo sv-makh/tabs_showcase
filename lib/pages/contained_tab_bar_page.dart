@@ -6,8 +6,15 @@ import '../data/data.dart';
 //https://pub.dev/packages/contained_tab_bar_view_with_custom_page_navigator
 //аналогичен более старому https://pub.dev/packages/contained_tab_bar_view
 
-class ContainedTabBarPage extends StatelessWidget {
+class ContainedTabBarPage extends StatefulWidget {
   const ContainedTabBarPage({super.key});
+
+  @override
+  State<ContainedTabBarPage> createState() => _ContainedTabBarPageState();
+}
+
+
+class _ContainedTabBarPageState extends State<ContainedTabBarPage> {
 
   @override
   Widget build(BuildContext context) {
