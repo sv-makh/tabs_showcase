@@ -44,30 +44,7 @@ class _ReorderableTabBarPageState extends State<ReorderableTabBarPage>
     return Scaffold(
       appBar: AppBar(
         title: const Text("reorderable_tabbar"),
-        /*bottom: ReorderableTabBar(
-          controller: _controller,
-          buildDefaultDragHandles: false,
-          tabs: tabs
-              .map((e) => ReorderableDragStartListener(
-                    index: tabs.indexOf(e),
-                    child: TabFilling(title: e),
-                  ))
-              .toList(),
-          indicatorSize: tabSizeIsLabel ? TabBarIndicatorSize.label : null,
-          isScrollable: isScrollable,
-          reorderingTabBackgroundColor: Colors.black45,
-          indicatorWeight: 5,
-          tabBorderRadius: const BorderRadius.vertical(
-            top: Radius.circular(8),
-          ),
-          onReorder: (oldIndex, newIndex) async {
-            String temp = tabs.removeAt(oldIndex);
-            Icon tempIcon = views.removeAt(oldIndex);
-            tabs.insert(newIndex, temp);
-            views.insert(newIndex, tempIcon);
-            setState(() {});
-          },
-        ),*/
+        /*bottom: ReorderableTabBar(*/
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
@@ -77,6 +54,7 @@ class _ReorderableTabBarPageState extends State<ReorderableTabBarPage>
             Icons.add,
             size: 60,
           ));
+          _controller = TabController(length: tabs.length, vsync: this);
           setState(() {});
         },
       ),
@@ -95,13 +73,13 @@ class _ReorderableTabBarPageState extends State<ReorderableTabBarPage>
                 },
                 icon: const Icon(Icons.arrow_forward_ios),),
             IconButton(onPressed: () {
-              setState(() {
                 tabs.removeAt(_controller.index);
                 views.removeAt(_controller.index);
+                if (tabs.isNotEmpty) initialValue = tabs[0];
                 _controller = TabController(length: tabs.length, vsync: this);
-              });
+                setState(() {  });
             }, icon: Icon(Icons.delete),),
-            const Spacer(),
+/*            const Spacer(),
             SizedBox(
               width: 300,
               child: DropdownButton<String>(
@@ -124,7 +102,7 @@ class _ReorderableTabBarPageState extends State<ReorderableTabBarPage>
                   //_controller.jumpTo(tabTitles.indexOf(value));
                 },
               ),
-            ),
+            ),*/
           ],),
           ReorderableTabBar(
             controller: _controller,
@@ -132,7 +110,14 @@ class _ReorderableTabBarPageState extends State<ReorderableTabBarPage>
             tabs: tabs
                 .map((e) => ReorderableDragStartListener(
               index: tabs.indexOf(e),
-              child: TabFilling(title: e),
+              child: TabFilling(title: e, onDelete: () {
+                int index = tabs.indexOf(e);
+                tabs.removeAt(index);
+                views.removeAt(index);
+                if (tabs.isNotEmpty) initialValue = tabs[0];
+                _controller = TabController(length: tabs.length, vsync: this);
+                setState(() { });
+              },),
             ))
                 .toList(),
             indicatorSize: tabSizeIsLabel ? TabBarIndicatorSize.label : null,
@@ -154,7 +139,7 @@ class _ReorderableTabBarPageState extends State<ReorderableTabBarPage>
             height: MediaQuery.of(context).size.height - 300,
             child: TabBarView(
               controller: _controller,
-              children: views,
+              children: views.toList(),
             ),
           ),
         ],
