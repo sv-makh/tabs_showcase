@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tabs_showcase/widget/tab_filling_sized.dart';
+import 'package:tabs_showcase/widget/menu_anchor_button.dart';
 
 import '../data/data.dart';
 import '../widget/tab_filling.dart';
@@ -47,7 +47,11 @@ class _DefaultPageState extends State<DefaultPage>
               child: Row(
                 children: [
                   _addButton(),
-                  _menuAnchor(),
+                  MenuAnchorButton(
+                    size: menuButtonSize,
+                    tabs: tabs,
+                    controller: _controller,
+                  ),
                 ],
               ),
             ),
@@ -58,7 +62,7 @@ class _DefaultPageState extends State<DefaultPage>
                 tabs: List.generate(
                   tabs.length,
                   (index) => Tab(
-                    child:TabFilling(
+                    child: TabFilling(
                       title: tabs[index],
                       onDelete: () {
                         _deleteTab(tabs[index]);
@@ -103,45 +107,7 @@ class _DefaultPageState extends State<DefaultPage>
           _controller = TabController(length: tabs.length, vsync: this);
           setState(() {});
         },
-        icon: Icon(Icons.add),
-      ),
-    );
-  }
-
-  Widget _menuAnchor() {
-    return SizedBox(
-      width: menuButtonSize,
-      height: menuButtonSize,
-      child: MenuAnchor(
-        builder: (BuildContext context, MenuController menuController,
-            Widget? child) {
-          return IconButton(
-            onPressed: () {
-              if (menuController.isOpen) {
-                menuController.close();
-              } else {
-                menuController.open();
-              }
-            },
-            icon: const Icon(Icons.more_vert),
-            tooltip: 'All tabs',
-          );
-        },
-        menuChildren: tabs.map((e) {
-          return MenuItemButton(
-            child: SizedBox(
-              width: 300,
-              child: Text(
-                e,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            onPressed: () {
-              _controller.animateTo(tabs.indexOf(e));
-            },
-          );
-        }).toList(),
+        icon: const Icon(Icons.add),
       ),
     );
   }

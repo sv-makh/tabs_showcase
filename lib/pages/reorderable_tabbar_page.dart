@@ -78,7 +78,7 @@ class _ReorderableTabBarPageState extends State<ReorderableTabBarPage>
                       ))
                   .toList(),
               padding: EdgeInsets.only(right: 2 * menuButtonSize),
-              labelPadding: EdgeInsets.all(8),
+              labelPadding: const EdgeInsets.all(8),
               indicatorSize: tabSizeIsLabel ? TabBarIndicatorSize.label : null,
               reorderingTabBackgroundColor: Colors.black45,
               indicatorWeight: 5,
@@ -128,7 +128,7 @@ class _ReorderableTabBarPageState extends State<ReorderableTabBarPage>
           _controller = TabController(length: tabs.length, vsync: this);
           setState(() {});
         },
-        icon: Icon(Icons.add),
+        icon: const Icon(Icons.add),
       ),
     );
   }

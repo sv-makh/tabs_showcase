@@ -96,7 +96,7 @@ class _ContainedTabBarPageState extends State<ContainedTabBarPage> {
           ));
           setState(() {});
         },
-        icon: Icon(Icons.add),
+        icon: const Icon(Icons.add),
       ),
     );
   }

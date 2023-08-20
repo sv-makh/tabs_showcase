@@ -98,7 +98,7 @@ class _TabContainerPageState extends State<TabContainerPage> {
           _controller = TabContainerController(length: tabs.length);
           setState(() {});
         },
-        icon: Icon(Icons.add),
+        icon: const Icon(Icons.add),
       ),
     );
   }

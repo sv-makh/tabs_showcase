@@ -25,7 +25,7 @@ class MyHomePage extends StatelessWidget {
             TextButton(onPressed: () {
               Navigator.pushNamed(context, '/reorderable_tabbar');
             }, child: const Text('reorderable_tabbar')),
-            Divider(),
+            const Divider(),
             TextButton(onPressed: () {
               Navigator.pushNamed(context, '/extended_tabs');
             }, child: const Text('extended_tabs')),
