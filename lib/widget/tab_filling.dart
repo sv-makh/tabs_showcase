@@ -12,7 +12,10 @@ class TabFilling extends StatelessWidget {
       message: title,
       child: ListTile(
         title: Text(title, overflow: TextOverflow.ellipsis),
-        trailing: IconButton(onPressed: onDelete, icon: const Icon(Icons.close),),// Icon(Icons.close),
+        trailing: IconButton(
+          onPressed: onDelete,
+          icon: const Icon(Icons.close),
+        ),
       ),
     );
   }
