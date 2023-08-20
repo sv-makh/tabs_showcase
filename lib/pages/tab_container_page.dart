@@ -80,8 +80,7 @@ class _TabContainerPageState extends State<TabContainerPage> {
     int index = tabs.indexOf(tab);
     tabs.removeAt(index);
     views.removeAt(index);
-    _controller = TabContainerController(
-        length: tabs.length); //TabController(length: tabs.length, vsync: this);
+    _controller = TabContainerController(length: tabs.length);
     setState(() {});
   }
 
