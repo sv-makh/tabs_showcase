@@ -151,7 +151,7 @@ class _ReorderableTabBarPageState extends State<ReorderableTabBarPage>
               }
             },
             icon: const Icon(Icons.more_vert),
-            tooltip: 'MenuAnchor',
+            tooltip: 'All tabs',
           );
         },
         menuChildren: tabs.map((e) {
@@ -178,7 +178,7 @@ class _ReorderableTabBarPageState extends State<ReorderableTabBarPage>
       width: menuButtonSize,
       height: menuButtonSize,
       child: PopupMenuButton(
-        tooltip: 'PopupMenuButton',
+        tooltip: 'All tabs',
         itemBuilder: (context) => tabs.map((e) {
           return PopupMenuItem(
             value: e,
