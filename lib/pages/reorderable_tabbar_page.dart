@@ -15,7 +15,7 @@ class ReorderableTabBarPage extends StatefulWidget {
 }
 
 class _ReorderableTabBarPageState extends State<ReorderableTabBarPage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late TabController _controller;
 
   List<String> tabs = List.from(tabTitles);
@@ -27,6 +27,9 @@ class _ReorderableTabBarPageState extends State<ReorderableTabBarPage>
   String initialValue = tabTitles[0];
 
   double menuButtonSize = 35;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
