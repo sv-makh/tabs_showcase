@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tabbed_view/tabbed_view.dart';
-import 'package:tabs_showcase/widget/overlay_menu_item.dart';
-import 'package:tabs_showcase/widget/tab_content.dart';
+import 'package:tabs_showcase/widget/tabbed_view/overlay_menu_item.dart';
+import 'package:tabs_showcase/widget/tabbed_view/tab_content.dart';
 
 class OverlayMenu extends StatelessWidget {
   double menuWidth;

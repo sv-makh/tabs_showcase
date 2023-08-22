@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tabbed_view/tabbed_view.dart';
-import 'package:tabs_showcase/widget/overlay_menu.dart';
-import 'package:tabs_showcase/widget/tab_content.dart';
-import 'package:tabs_showcase/widget/tab_tooltip_leading.dart';
+import 'package:tabs_showcase/widget/tabbed_view/overlay_menu.dart';
+import 'package:tabs_showcase/widget/tabbed_view/tab_content.dart';
+import 'package:tabs_showcase/widget/tabbed_view/tab_tooltip_leading.dart';
 
 import '../data/data.dart';
 import '../data/tabbed_theme_data.dart';

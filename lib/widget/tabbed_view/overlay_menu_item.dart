@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tabs_showcase/widget/tab_leading.dart';
+import 'package:tabs_showcase/widget/tabbed_view/tab_leading.dart';
 
 class OverlayMenuItem extends StatefulWidget {
   double menuWidth;
