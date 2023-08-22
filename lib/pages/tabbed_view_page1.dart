@@ -5,6 +5,7 @@ import 'package:tabs_showcase/widget/tab_content.dart';
 import 'package:tabs_showcase/widget/tab_tooltip_leading.dart';
 
 import '../data/data.dart';
+import '../data/tabbed_theme_data.dart';
 
 //https://pub.dev/packages/tabbed_view
 
@@ -63,7 +64,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
         title: const Text('new tabbed_view'),
       ),
       body: TabbedViewTheme(
-        data: TabbedViewThemeData.mobile(),
+        data: themeData(),
         child: TabbedView(
           controller: _controller,
           tabsAreaButtonsBuilder: (context, tabsCount) {
