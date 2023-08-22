@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:tabbed_view/tabbed_view.dart';
+import 'package:tabs_showcase/widget/overlay_menu.dart';
 import 'package:tabs_showcase/widget/tab_content.dart';
+import 'package:tabs_showcase/widget/tab_leading.dart';
 
 import '../data/data.dart';
 
 //https://pub.dev/packages/tabbed_view
 
-class TabbedViewPage extends StatefulWidget {
-  const TabbedViewPage({super.key});
+class TabbedViewPage1 extends StatefulWidget {
+  const TabbedViewPage1({super.key});
 
   @override
-  State<TabbedViewPage> createState() => _TabbedViewPageState();
+  State<TabbedViewPage1> createState() => _TabbedViewPage1State();
 }
 
-class _TabbedViewPageState extends State<TabbedViewPage> {
+class _TabbedViewPage1State extends State<TabbedViewPage1> {
   late TabbedViewController _controller;
 
   List<TabData> _closedTabs = [];
 
   late OverlayEntry? _overlayEntry;
-  OverlayState? overlayState; // = Overlay.of(context);
+  OverlayState? overlayState;
   double _overlayMenuWidth = 300;
 
   @override
@@ -31,6 +33,10 @@ class _TabbedViewPageState extends State<TabbedViewPage> {
     for (int i = 0; i < tabTitles.length; i++) {
       var tabData = TabData(
         text: _calculateTitle(tabTitles[i], tabTitles),
+        leading: (context, status) => TabLeading(
+          tooltip: tabTitles[i],
+          color: Colors.primaries[i % Colors.primaries.length],
+        ),
         content: TabContent(content: tabViews[i], fullTabTitle: tabTitles[i]),
       );
       tabs.add(tabData);
@@ -49,7 +55,7 @@ class _TabbedViewPageState extends State<TabbedViewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('tabbed_view'),
+        title: const Text('new tabbed_view'),
       ),
       body: TabbedViewTheme(
         data: TabbedViewThemeData.mobile(),
@@ -75,6 +81,11 @@ class _TabbedViewPageState extends State<TabbedViewPage> {
                   _controller.addTab(
                     TabData(
                       text: _calculateTitle(newTabTitle, tabsList),
+                      leading: (context, status) => TabLeading(
+                        tooltip: newTabTitle,
+                        color: Colors.primaries[
+                            (tabsList.length - 1) % Colors.primaries.length],
+                      ),
                       content: TabContent(
                         content: const Icon(
                           Icons.add,
@@ -119,7 +130,6 @@ class _TabbedViewPageState extends State<TabbedViewPage> {
           },
           onTabClose: (index, tabData) {
             _onClose(tabData);
-            //_rebuildOverlayMenu();
           },
         ),
       ),
@@ -143,107 +153,20 @@ class _TabbedViewPageState extends State<TabbedViewPage> {
 
   void _showOverlayMenu(BuildContext context) {
     overlayState = Overlay.of(context);
-    _overlayEntry = OverlayEntry(builder: (context) {
-      return Stack(children: [
-        ModalBarrier(
-          onDismiss: () {
-            _closeOverlayMenu();
+    _overlayEntry = OverlayEntry(
+      builder: (context) {
+        return OverlayMenu(
+          menuWidth: _overlayMenuWidth,
+          closedTabs: _closedTabs,
+          controller: _controller,
+          closeTab: (TabData tabData) {
+            _onClose(tabData);
           },
-        ),
-        Positioned(
-          left: MediaQuery.of(context).size.width - _overlayMenuWidth - 5,
-          top: 100,
-          child: Material(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey, width: 1),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              alignment: Alignment.topCenter,
-              padding: EdgeInsets.all(5),
-              width: _overlayMenuWidth,
-              height: MediaQuery.of(context).size.height - 200,
-              child: _menu(),
-            ),
-          ),
-        ),
-      ]);
-    });
-    overlayState!.insert(_overlayEntry!);
-  }
-
-  Widget _menu() {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextField(
-            decoration: InputDecoration(hintText: 'Search tabs', hintStyle: TextStyle(fontSize: 12)),
-          ),
-          _divider(),
-          Text('Open tabs'),
-          ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: _controller.tabs.length,
-            itemBuilder: (BuildContext context, int index) {
-              return MenuItemButton(
-                trailingIcon: IconButton(
-                  icon: Icon(Icons.close),
-                  onPressed: () {
-                    TabData tabToRemove = _controller.getTabByIndex(index);
-                    _controller.removeTab(index);
-                    _onClose(tabToRemove);
-                  },
-                ),
-                onPressed: () {
-                  _controller.selectedIndex = index;
-                  _closeOverlayMenu();
-                },
-                child: SizedBox(
-                  width: _overlayMenuWidth - 80,
-                  child: Text(
-                    (_controller.tabs[index].content as TabContent)
-                        .fullTabTitle,
-                    style: TextStyle(fontSize: 12),
-                    maxLines: 4,
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: false,
-                  ),
-                ),
-              );
-            },
-          ),
-          _divider(),
-          Text('Recently closed'),
-          ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: _closedTabs.length,
-            itemBuilder: (BuildContext context, int index) {
-              return MenuItemButton(
-                child: SizedBox(
-                  width: _overlayMenuWidth - 80,
-                  child: Text(
-                      (_closedTabs[index].content as TabContent).fullTabTitle,
-                    style: TextStyle(fontSize: 12),
-                    maxLines: 4,
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: false,
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
+          closeOverlay: _closeOverlayMenu,
+        );
+      },
     );
-  }
-
-  Widget _divider() {
-    return const SizedBox(height: 10,);
+    overlayState!.insert(_overlayEntry!);
   }
 
   void _closeOverlayMenu() {
