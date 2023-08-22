@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:tabs_showcase/widget/tab_leading.dart';
 
 class TabTooltipLeading extends StatelessWidget {
-  String? tooltip;
+  String tooltip;
   Color color;
 
-  TabTooltipLeading({super.key, this.tooltip, required this.color});
+  TabTooltipLeading({super.key, required this.tooltip, required this.color});
 
   @override
   Widget build(BuildContext context) {
     return Tooltip(
       message: tooltip,
-      child: Container(
-        padding: const EdgeInsets.only(right: 4),
-        child: Icon(Icons.circle, size: 5, color: color,),
-      ),
+      child: TabLeading(color: color,),
     );
   }
 }

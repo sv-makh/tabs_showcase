@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tabbed_view/tabbed_view.dart';
 import 'package:tabs_showcase/widget/overlay_menu.dart';
 import 'package:tabs_showcase/widget/tab_content.dart';
-import 'package:tabs_showcase/widget/tab_leading.dart';
+import 'package:tabs_showcase/widget/tab_tooltip_leading.dart';
 
 import '../data/data.dart';
 
@@ -31,13 +31,18 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     List<TabData> tabs = [];
 
     for (int i = 0; i < tabTitles.length; i++) {
+      Color color = Colors.primaries[i % Colors.primaries.length];
       var tabData = TabData(
         text: _calculateTitle(tabTitles[i], tabTitles),
-        leading: (context, status) => TabLeading(
+        leading: (context, status) => TabTooltipLeading(
           tooltip: tabTitles[i],
-          color: Colors.primaries[i % Colors.primaries.length],
+          color: color,
         ),
-        content: TabContent(content: tabViews[i], fullTabTitle: tabTitles[i]),
+        content: TabContent(
+          content: tabViews[i],
+          fullTabTitle: tabTitles[i],
+          color: color,
+        ),
       );
       tabs.add(tabData);
     }
@@ -78,13 +83,14 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
                     tab.text = _calculateTitle(
                         (tab.content as TabContent).fullTabTitle, tabsList);
                   }
+                  Color color = Colors.primaries[
+                  (tabsList.length - 1) % Colors.primaries.length];
                   _controller.addTab(
                     TabData(
                       text: _calculateTitle(newTabTitle, tabsList),
-                      leading: (context, status) => TabLeading(
+                      leading: (context, status) => TabTooltipLeading(
                         tooltip: newTabTitle,
-                        color: Colors.primaries[
-                            (tabsList.length - 1) % Colors.primaries.length],
+                        color: color,
                       ),
                       content: TabContent(
                         content: const Icon(
@@ -92,6 +98,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
                           size: 60,
                         ),
                         fullTabTitle: newTabTitle,
+                        color: color,
                       ),
                     ),
                   );
@@ -162,7 +169,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
           closeTab: (TabData tabData) {
             _onClose(tabData);
           },
-          closeOverlay: _closeOverlayMenu,
+          closeOverlay: _closeOverlayMenu, rebuildOverlay: () { _rebuildOverlayMenu(); },
         );
       },
     );

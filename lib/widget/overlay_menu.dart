@@ -9,6 +9,7 @@ class OverlayMenu extends StatelessWidget {
   TabbedViewController controller;
   void Function(TabData) closeTab;
   VoidCallback closeOverlay;
+  VoidCallback rebuildOverlay;
 
   OverlayMenu({
     super.key,
@@ -17,13 +18,16 @@ class OverlayMenu extends StatelessWidget {
     required this.controller,
     required this.closeTab,
     required this.closeOverlay,
+    required this.rebuildOverlay,
   });
 
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
       ModalBarrier(
-        onDismiss: () { closeOverlay(); },
+        onDismiss: () {
+          closeOverlay();
+        },
       ),
       Positioned(
           left: MediaQuery.of(context).size.width - menuWidth - 5,
@@ -63,6 +67,7 @@ class OverlayMenu extends StatelessWidget {
             itemCount: controller.tabs.length,
             itemBuilder: (BuildContext context, int index) {
               return OverlayMenuItem(
+                currentTab: index == controller.selectedIndex,
                 menuWidth: menuWidth,
                 text:
                     (controller.tabs[index].content as TabContent).fullTabTitle,
@@ -75,6 +80,9 @@ class OverlayMenu extends StatelessWidget {
                   controller.removeTab(index);
                   closeTab(tabToRemove);
                 },
+                leadingColor:
+                    (controller.tabs[index].content as TabContent).color,
+                openTab: true, rebuildOverlay: () { rebuildOverlay(); },
               );
             },
           ),
@@ -86,8 +94,11 @@ class OverlayMenu extends StatelessWidget {
             itemCount: closedTabs.length,
             itemBuilder: (BuildContext context, int index) {
               return OverlayMenuItem(
+                currentTab: false,
                 menuWidth: menuWidth,
                 text: (closedTabs[index].content as TabContent).fullTabTitle,
+                leadingColor: (closedTabs[index].content as TabContent).color,
+                openTab: false, rebuildOverlay: () { rebuildOverlay(); },
               );
             },
           ),
