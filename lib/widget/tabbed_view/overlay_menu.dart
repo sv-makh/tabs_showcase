@@ -54,6 +54,8 @@ class OverlayMenu extends StatelessWidget {
   }
 
   Widget _menu() {
+    TextStyle textStyle = TextStyle(fontWeight: FontWeight.bold, fontSize: 10);
+
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -64,7 +66,8 @@ class OverlayMenu extends StatelessWidget {
                 hintText: 'Search tabs', hintStyle: TextStyle(fontSize: 12)),
           ),
           _divider(),
-          Text('Open tabs'),
+          _divider(),
+          Text('OPEN TABS', style: textStyle),
           ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
@@ -132,7 +135,7 @@ class OverlayMenu extends StatelessWidget {
             },
           ),
           _divider(),
-          Text('Recently closed'),
+          Text('RECENTLY CLOSED', style: textStyle),
           ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
