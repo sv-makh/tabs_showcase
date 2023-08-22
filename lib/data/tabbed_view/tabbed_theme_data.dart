@@ -7,23 +7,23 @@ TabbedViewThemeData themeData() {
   BorderSide tabsAreaBorderSide =
       const BorderSide(color: Color(0xffE8EAED), width: 3);
 
-  Color hoverColor = Color(0xffF0F2F4);//Color(0xffEFF0F3);
-  Color borderColor = Color(0xff919598);
+  Color hoverColor = const Color(0xffF0F2F4);
+  Color borderColor = const Color(0xff919598);
 
   themeData.tabsArea
-    ..buttonsAreaPadding = EdgeInsets.only(right: 3)
+    ..buttonsAreaPadding = const EdgeInsets.only(right: 3)
     ..buttonIconSize = 18
     ..buttonPadding = const EdgeInsets.only(right: 3, left: 3, bottom: 3)
     ..border = Border(top: tabsAreaBorderSide, bottom: tabsAreaBorderSide)
     ..middleGap = 1
     ..color = const Color(0xffE8EAED);
 
-  Radius radius = const Radius.circular(10.0);
+  Radius radius = const Radius.circular(5.0);
   BorderRadiusGeometry? tabBorderRadius =
       BorderRadius.only(topLeft: radius, topRight: radius);
 
   themeData.tab
-  ..textStyle = TextStyle(fontSize: 13)
+    ..textStyle = const TextStyle(fontSize: 13)
     ..padding = const EdgeInsets.fromLTRB(10, 4, 10, 4)
     ..buttonsOffset = 8
     ..decoration = BoxDecoration(
@@ -35,8 +35,8 @@ TabbedViewThemeData themeData() {
     )
     ..selectedStatus.decoration = BoxDecoration(
         color: const Color(0xffFFFFFF), borderRadius: tabBorderRadius)
-    ..highlightedStatus.decoration = BoxDecoration(
-        color: hoverColor, borderRadius: tabBorderRadius);
+    ..highlightedStatus.decoration =
+        BoxDecoration(color: hoverColor, borderRadius: tabBorderRadius);
 
   themeData.menu
     ..border = Border.all(color: borderColor, width: 1)

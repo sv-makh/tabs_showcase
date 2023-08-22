@@ -4,8 +4,8 @@ import 'package:tabs_showcase/widget/tabbed_view/overlay_menu.dart';
 import 'package:tabs_showcase/widget/tabbed_view/tab_content.dart';
 import 'package:tabs_showcase/widget/tabbed_view/tab_tooltip_leading.dart';
 
-import '../data/data.dart';
-import '../data/tabbed_theme_data.dart';
+import '../../data/data.dart';
+import '../../data/tabbed_view/tabbed_theme_data.dart';
 
 //https://pub.dev/packages/tabbed_view
 
@@ -85,7 +85,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
                         (tab.content as TabContent).fullTabTitle, tabsList);
                   }
                   Color color = Colors.primaries[
-                  (tabsList.length - 1) % Colors.primaries.length];
+                      (tabsList.length - 1) % Colors.primaries.length];
                   _controller.addTab(
                     TabData(
                       text: _calculateTitle(newTabTitle, tabsList),
@@ -104,9 +104,6 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
                     ),
                   );
                   setState(() {});
-                  //if (_overlayEntry != null) {
-                  //  _rebuildOverlayMenu();
-                  //}
                 },
               ),
             );
@@ -153,9 +150,6 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
       tab.text =
           _calculateTitle((tab.content as TabContent).fullTabTitle, tabsList);
     }
-    //if (_overlayEntry != null) {
-    //  _rebuildOverlayMenu();
-    //}
     setState(() {});
   }
 
@@ -170,7 +164,10 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
           closeTab: (TabData tabData) {
             _onClose(tabData);
           },
-          closeOverlay: _closeOverlayMenu, rebuildOverlay: () { _rebuildOverlayMenu(); },
+          closeOverlay: _closeOverlayMenu,
+          rebuildOverlay: () {
+            _rebuildOverlayMenu();
+          },
         );
       },
     );
@@ -193,25 +190,35 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
     int croppedLength = median;
     int tabsWithoutCorrection = 5;
-    int charsForCorrection = 1;
+    int charsForCorrection = 2;
 
     //вносим дополнительное уменьшение размера заголовков при увеличении количества вкладок
     if (tabs.length >= tabsWithoutCorrection) {
       int correction =
           charsForCorrection * (tabs.length - tabsWithoutCorrection);
-      if ((croppedLength - correction) > 0) {
+      if ((croppedLength - correction) >= 0) {
         croppedLength -= correction;
+      } else {
+        croppedLength = 0;
       }
     }
 
     if (title.length <= croppedLength) {
-      return title;
+      return title.padRight(croppedLength - title.length);
     } else {
-      return '${title.substring(0, croppedLength)}...';
+      if (croppedLength >= 3) {
+        return '${title.substring(0, croppedLength - 3)}...';
+      } else if (croppedLength == 2) {
+        return '..';
+      } else if (croppedLength == 1) {
+        return '.';
+      } else {
+        return '';
+      }
     }
   }
 
-  //вычислениие медианной длины для списка заголовков вкладок
+//вычислениие медианной длины для списка заголовков вкладок
   int _calculateMedian(List<String> tabs) {
     if (tabs.isEmpty) return 0;
 

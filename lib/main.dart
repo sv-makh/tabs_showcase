@@ -5,8 +5,8 @@ import 'package:tabs_showcase/pages/extended_tabs_page.dart';
 import 'package:tabs_showcase/pages/my_home_page.dart';
 import 'package:tabs_showcase/pages/reorderable_tabbar_page.dart';
 import 'package:tabs_showcase/pages/tab_container_page.dart';
-import 'package:tabs_showcase/pages/tabbed_view_page0.dart';
-import 'package:tabs_showcase/pages/tabbed_view_page1.dart';
+import 'package:tabs_showcase/pages/tabbed_view/tabbed_view_page0.dart';
+import 'package:tabs_showcase/pages/tabbed_view/tabbed_view_page1.dart';
 
 void main() {
   runApp(const MyApp());

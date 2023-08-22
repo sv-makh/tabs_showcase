@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tabbed_view/tabbed_view.dart';
 
-import '../data/data.dart';
+import '../../data/data.dart';
 
 //https://pub.dev/packages/tabbed_view
 
