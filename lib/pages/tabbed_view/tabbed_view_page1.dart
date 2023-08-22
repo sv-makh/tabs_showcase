@@ -25,6 +25,9 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   OverlayState? overlayState;
   double _overlayMenuWidth = 300;
 
+  int maxTabs = 15;
+  List<TabData> additionalTabs = [];
+
   @override
   void initState() {
     super.initState();
@@ -45,7 +48,11 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
           color: color,
         ),
       );
-      tabs.add(tabData);
+      if (i < maxTabs) {
+        tabs.add(tabData);
+      } else {
+        additionalTabs.add(tabData);
+      }
     }
 
     _controller = TabbedViewController(tabs);
@@ -78,32 +85,38 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
                           (element.content as TabContent).fullTabTitle)
                       .toList();
                   String newTabTitle =
-                      'new ${tabsList.length.toString()}th tab';
+                      'new ${tabsList.length.toString()}th tab ${DateTime.now().millisecond}';
                   tabsList.add(newTabTitle);
+                  Color color = Colors.primaries[
+                      (tabsList.length - 1) % Colors.primaries.length];
+
                   for (var tab in _controller.tabs) {
                     tab.text = _calculateTitle(
                         (tab.content as TabContent).fullTabTitle, tabsList);
                   }
-                  Color color = Colors.primaries[
-                      (tabsList.length - 1) % Colors.primaries.length];
-                  _controller.addTab(
-                    TabData(
-                      text: _calculateTitle(newTabTitle, tabsList),
-                      leading: (context, status) => TabTooltipLeading(
-                        tooltip: newTabTitle,
-                        color: color,
+
+                  TabData newTabData = TabData(
+                    text: _calculateTitle(newTabTitle, tabsList),
+                    leading: (context, status) => TabTooltipLeading(
+                      tooltip: newTabTitle,
+                      color: color,
+                    ),
+                    content: TabContent(
+                      content: const Icon(
+                        Icons.add,
+                        size: 60,
                       ),
-                      content: TabContent(
-                        content: const Icon(
-                          Icons.add,
-                          size: 60,
-                        ),
-                        fullTabTitle: newTabTitle,
-                        color: color,
-                      ),
+                      fullTabTitle: newTabTitle,
+                      color: color,
                     ),
                   );
-                  setState(() {});
+
+                  if (tabsList.length - 1 < 15) {
+                    _controller.addTab(newTabData);
+                    setState(() {});
+                  } else {
+                    additionalTabs.add(newTabData);
+                  }
                 },
               ),
             );
@@ -143,6 +156,12 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
   void _onClose(TabData tabData) {
     _closedTabs.add(tabData);
+
+    if ((_controller.tabs.length < maxTabs) && (additionalTabs.isNotEmpty)) {
+      _controller.addTab(additionalTabs[0]);
+      additionalTabs.removeAt(0);
+    }
+
     List<String> tabsList = _controller.tabs
         .map((element) => (element.content as TabContent).fullTabTitle)
         .toList();
@@ -168,6 +187,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
           rebuildOverlay: () {
             _rebuildOverlayMenu();
           },
+          additionalTabs: additionalTabs, maxTabs: maxTabs,
         );
       },
     );
@@ -178,6 +198,9 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     if (_overlayEntry != null && _overlayEntry!.mounted)
       _overlayEntry!.remove();
     _overlayEntry = null;
+    setState(() {
+
+    });
   }
 
   void _rebuildOverlayMenu() {

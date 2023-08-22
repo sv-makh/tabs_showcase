@@ -10,6 +10,8 @@ class OverlayMenu extends StatelessWidget {
   void Function(TabData) closeTab;
   VoidCallback closeOverlay;
   VoidCallback rebuildOverlay;
+  List<TabData> additionalTabs;
+  int maxTabs;
 
   OverlayMenu({
     super.key,
@@ -19,6 +21,8 @@ class OverlayMenu extends StatelessWidget {
     required this.closeTab,
     required this.closeOverlay,
     required this.rebuildOverlay,
+    required this.additionalTabs,
+    required this.maxTabs,
   });
 
   @override
@@ -82,6 +86,41 @@ class OverlayMenu extends StatelessWidget {
                 },
                 leadingColor:
                     (controller.tabs[index].content as TabContent).color,
+                openTab: true,
+                rebuildOverlay: () {
+                  rebuildOverlay();
+                },
+                closeOverlay: () {
+                  closeOverlay();
+                },
+              );
+            },
+          ),
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: additionalTabs.length,
+            itemBuilder: (BuildContext context, int index) {
+              return OverlayMenuItem(
+                currentTab: false,
+                menuWidth: menuWidth,
+                text:
+                (additionalTabs[index].content as TabContent).fullTabTitle,
+                onPressed: () {
+                  List<TabData> allTabs = List.from(controller.tabs);
+                  TabData temp = allTabs[maxTabs - 1];
+                  allTabs[maxTabs - 1] = additionalTabs[index];
+                  additionalTabs[index] = temp;
+                  controller.setTabs(allTabs);
+                  controller.selectedIndex = maxTabs - 1;
+                  closeOverlay();
+                },
+                onPressedClose: () {
+                  closedTabs.add(additionalTabs[index]);
+                  additionalTabs.removeAt(index);
+                },
+                leadingColor:
+                (controller.tabs[index].content as TabContent).color,
                 openTab: true,
                 rebuildOverlay: () {
                   rebuildOverlay();
