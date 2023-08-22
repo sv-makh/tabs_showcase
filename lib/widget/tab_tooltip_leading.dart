@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class TabLeading extends StatelessWidget {
-  String tooltip;
+class TabTooltipLeading extends StatelessWidget {
+  String? tooltip;
   Color color;
 
-  TabLeading({super.key, required this.tooltip, required this.color});
+  TabTooltipLeading({super.key, this.tooltip, required this.color});
 
   @override
   Widget build(BuildContext context) {
