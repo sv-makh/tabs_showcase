@@ -82,7 +82,13 @@ class OverlayMenu extends StatelessWidget {
                 },
                 leadingColor:
                     (controller.tabs[index].content as TabContent).color,
-                openTab: true, rebuildOverlay: () { rebuildOverlay(); },
+                openTab: true,
+                rebuildOverlay: () {
+                  rebuildOverlay();
+                },
+                closeOverlay: () {
+                  closeOverlay();
+                },
               );
             },
           ),
@@ -98,7 +104,13 @@ class OverlayMenu extends StatelessWidget {
                 menuWidth: menuWidth,
                 text: (closedTabs[index].content as TabContent).fullTabTitle,
                 leadingColor: (closedTabs[index].content as TabContent).color,
-                openTab: false, rebuildOverlay: () { rebuildOverlay(); },
+                openTab: false,
+                rebuildOverlay: () {
+                  rebuildOverlay();
+                },
+                closeOverlay: () {
+                  closeOverlay();
+                },
               );
             },
           ),

@@ -104,9 +104,9 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
                     ),
                   );
                   setState(() {});
-                  if (_overlayEntry != null) {
-                    _rebuildOverlayMenu();
-                  }
+                  //if (_overlayEntry != null) {
+                  //  _rebuildOverlayMenu();
+                  //}
                 },
               ),
             );
@@ -153,9 +153,9 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
       tab.text =
           _calculateTitle((tab.content as TabContent).fullTabTitle, tabsList);
     }
-    if (_overlayEntry != null) {
-      _rebuildOverlayMenu();
-    }
+    //if (_overlayEntry != null) {
+    //  _rebuildOverlayMenu();
+    //}
     setState(() {});
   }
 

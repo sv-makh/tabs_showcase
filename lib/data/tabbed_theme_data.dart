@@ -7,7 +7,7 @@ TabbedViewThemeData themeData() {
   BorderSide tabsAreaBorderSide =
       const BorderSide(color: Color(0xffE8EAED), width: 3);
 
-  Color hoverColor = Color(0xffEFF0F3);
+  Color hoverColor = Color(0xffF0F2F4);//Color(0xffEFF0F3);
   Color borderColor = Color(0xff919598);
 
   themeData.tabsArea
@@ -15,7 +15,7 @@ TabbedViewThemeData themeData() {
     ..buttonIconSize = 18
     ..buttonPadding = const EdgeInsets.only(right: 3, left: 3, bottom: 3)
     ..border = Border(top: tabsAreaBorderSide, bottom: tabsAreaBorderSide)
-    ..middleGap = 0
+    ..middleGap = 1
     ..color = const Color(0xffE8EAED);
 
   Radius radius = const Radius.circular(10.0);
@@ -23,6 +23,7 @@ TabbedViewThemeData themeData() {
       BorderRadius.only(topLeft: radius, topRight: radius);
 
   themeData.tab
+  ..textStyle = TextStyle(fontSize: 13)
     ..padding = const EdgeInsets.fromLTRB(10, 4, 10, 4)
     ..buttonsOffset = 8
     ..decoration = BoxDecoration(

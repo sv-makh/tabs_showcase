@@ -10,6 +10,7 @@ class OverlayMenuItem extends StatefulWidget {
   bool openTab;
   bool currentTab;
   VoidCallback rebuildOverlay;
+  VoidCallback closeOverlay;
 
   OverlayMenuItem({
     super.key,
@@ -21,6 +22,7 @@ class OverlayMenuItem extends StatefulWidget {
     required this.openTab,
     required this.currentTab,
     required this.rebuildOverlay,
+    required this.closeOverlay,
   });
 
   @override
@@ -28,12 +30,10 @@ class OverlayMenuItem extends StatefulWidget {
 }
 
 class _OverlayMenuItemState extends State<OverlayMenuItem> {
-
   bool showTrailing = false;
 
   @override
   Widget build(BuildContext context) {
-
     return MenuItemButton(
       leadingIcon: TabLeading(
         color: widget.leadingColor,
@@ -41,7 +41,12 @@ class _OverlayMenuItemState extends State<OverlayMenuItem> {
       trailingIcon: (showTrailing || widget.currentTab)
           ? IconButton(
               icon: Icon(Icons.close),
-              onPressed: widget.onPressedClose,
+              onPressed: () {
+                if (widget.onPressedClose != null) {
+                  widget.onPressedClose!();
+                  widget.closeOverlay();
+                }
+              },
             )
           : null,
       onPressed: widget.onPressed,
