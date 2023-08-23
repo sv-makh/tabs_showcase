@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:tabbed_view/tabbed_view.dart';
 import 'package:tabs_showcase/widget/tabbed_view/overlay_menu.dart';
 import 'package:tabs_showcase/widget/tabbed_view/tab_content.dart';
@@ -25,7 +26,9 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   OverlayState? overlayState;
   double _overlayMenuWidth = 300;
 
-  int maxTabs = 15;
+  int maxTabs = 0;//15;
+  int minTabWidth = 52;
+  int areaButtonsWidth = 97;
   List<TabData> additionalTabs = [];
 
   @override
@@ -33,6 +36,9 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     super.initState();
 
     List<TabData> tabs = [];
+
+    int tabViewWidth = window.physicalSize.width.round();
+    maxTabs = (tabViewWidth - areaButtonsWidth) ~/ minTabWidth;
 
     for (int i = 0; i < tabTitles.length; i++) {
       Color color = Colors.primaries[i % Colors.primaries.length];
@@ -111,7 +117,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
                     ),
                   );
 
-                  if (tabsList.length - 1 < 15) {
+                  if (tabsList.length - 1 < maxTabs) {
                     _controller.addTab(newTabData);
                     setState(() {});
                   } else {
