@@ -37,6 +37,8 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   int tabViewWidth = 0;
   List<TabData> additionalTabs = [];
 
+  double tabPadding = 10;
+
   void calculateMaxTabs(int tabViewWidth) {
     maxTabs = (tabViewWidth - areaButtonsWidth) ~/ minLeadWidth;
     maxTabsLeadClose = (tabViewWidth - areaButtonsWidth) ~/ leadCloseWidth;
@@ -48,7 +50,8 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
   bool isTabsClosable(int numOfTabs) {
     bool closable = true;
-    if ((numOfTabs > maxTabsLeadClose) && (numOfTabs < maxTabsLead)) {
+    if (numOfTabs > maxTabsLeadClose) {
+      //&& (numOfTabs < maxTabsLead)) {
       closable = false;
     }
     //print('closable $closable');
@@ -105,10 +108,11 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('new tabbed_view'),
+        title: Text('new tabbed_view $tabPadding'),
       ),
       body: TabbedViewTheme(
-        data: themeData(leftTabPadding: 10, rightTabPadding: 10),
+        data:
+            themeData(leftTabPadding: tabPadding, rightTabPadding: tabPadding),
         child: TabbedView(
           controller: _controller,
           onTabSelection: (index) {
@@ -148,7 +152,14 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
                         _controller.tabs[i].closable = closable;
                       }
                     }
-                    setState(() {});
+                  }
+
+                  if (_controller.tabs.length >= maxTabsLead) {
+                    if (tabPadding >= 1) {
+                      tabPadding -= (tabsList.length - 1 - maxTabsLead) ~/ ((maxTabs - maxTabsLead)/10) + 1;
+                      if (tabPadding < 0) tabPadding = 0;
+                      //tabPadding -= 1;
+                    }
                   }
 
                   TabData newTabData = TabData(
@@ -168,12 +179,14 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
                     ),
                   );
 
-                  if (tabsList.length - 1 < maxTabsLead) {
+                  if (tabsList.length - 1 < maxTabs) {
+                    //maxTabsLead) {
                     _controller.addTab(newTabData);
-                    setState(() {});
                   } else {
                     additionalTabs.add(newTabData);
                   }
+
+                  setState(() {});
                 },
               ),
             );
