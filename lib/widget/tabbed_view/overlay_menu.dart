@@ -55,6 +55,7 @@ class OverlayMenu extends StatelessWidget {
 
   Widget _menu() {
     TextStyle textStyle = TextStyle(fontWeight: FontWeight.bold, fontSize: 10);
+    int selectedIndex = controller.selectedIndex!;
 
     return SingleChildScrollView(
       child: Column(
@@ -68,12 +69,36 @@ class OverlayMenu extends StatelessWidget {
           _divider(),
           _divider(),
           Text('OPEN TABS', style: textStyle),
+          OverlayMenuItem(
+            currentTab: true,
+            menuWidth: menuWidth,
+            text:
+            (controller.tabs[selectedIndex].content as TabContent).fullTabTitle,
+            onPressed: () {
+              controller.selectedIndex = selectedIndex;
+              closeOverlay();
+            },
+            onPressedClose: () {
+              TabData tabToRemove = controller.getTabByIndex(selectedIndex);
+              controller.removeTab(selectedIndex);
+              closeTab(tabToRemove);
+            },
+            leadingColor:
+            (controller.tabs[selectedIndex].content as TabContent).color,
+            openTab: true,
+            rebuildOverlay: () {
+              rebuildOverlay();
+            },
+            closeOverlay: () {
+              closeOverlay();
+            },
+          ),
           ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: controller.tabs.length,
             itemBuilder: (BuildContext context, int index) {
-              return OverlayMenuItem(
+              return (index == selectedIndex) ? Container() : OverlayMenuItem(
                 currentTab: index == controller.selectedIndex,
                 menuWidth: menuWidth,
                 text:
