@@ -27,10 +27,34 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   double _overlayMenuWidth = 300;
 
   int maxTabs = 1;
-  int minTabWidth = 52;//11
+  int maxTabsLeadClose = 1;
+  int maxTabsLead = 1;
+
+  int leadCloseWidth = 53;
+  int leadWidth = 31;
+  int minLeadWidth = 11;
   int areaButtonsWidth = 97;
   int tabViewWidth = 0;
   List<TabData> additionalTabs = [];
+
+  void calculateMaxTabs(int tabViewWidth) {
+    maxTabs = (tabViewWidth - areaButtonsWidth) ~/ minLeadWidth;
+    maxTabsLeadClose = (tabViewWidth - areaButtonsWidth) ~/ leadCloseWidth;
+    maxTabsLead = (tabViewWidth - areaButtonsWidth) ~/ leadWidth;
+
+    //print(
+    //    'maxTabsLeadClose=$maxTabsLeadClose maxTabsLead=$maxTabsLead maxTabs=$maxTabs');
+  }
+
+  bool isTabsClosable(int numOfTabs) {
+    bool closable = true;
+    if ((numOfTabs > maxTabsLeadClose) && (numOfTabs < maxTabsLead)) {
+      closable = false;
+    }
+    //print('closable $closable');
+
+    return closable;
+  }
 
   @override
   void initState() {
@@ -39,11 +63,14 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     List<TabData> tabs = [];
 
     tabViewWidth = window.physicalSize.width.round();
-    maxTabs = (tabViewWidth - areaButtonsWidth) ~/ minTabWidth;
+    calculateMaxTabs(tabViewWidth);
+
+    bool closable = isTabsClosable(tabTitles.length);
 
     for (int i = 0; i < tabTitles.length; i++) {
       Color color = Colors.primaries[i % Colors.primaries.length];
       var tabData = TabData(
+        closable: (i == 0) ? true : closable,
         text: _calculateTitle(tabTitles[i], tabTitles),
         leading: (context, status) => TabTooltipLeading(
           tooltip: tabTitles[i],
@@ -55,7 +82,8 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
           color: color,
         ),
       );
-      if (i < maxTabs) {
+
+      if (i < maxTabsLead) {
         tabs.add(tabData);
       } else {
         additionalTabs.add(tabData);
@@ -73,6 +101,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
   @override
   Widget build(BuildContext context) {
+    calculateMaxTabs(MediaQuery.of(context).size.width.round());
 
     return Scaffold(
       appBar: AppBar(
@@ -82,6 +111,13 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
         data: themeData(leftTabPadding: 10, rightTabPadding: 10),
         child: TabbedView(
           controller: _controller,
+          onTabSelection: (index) {
+            if (_controller.tabs.length > maxTabsLeadClose) {
+              for (int i = 0; i < _controller.tabs.length; i++) {
+                _controller.tabs[i].closable = (i == index) ? true : false;
+              }
+            }
+          },
           tabsAreaButtonsBuilder: (context, tabsCount) {
             List<TabButton> buttons = [];
             buttons.add(
@@ -103,7 +139,20 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
                         (tab.content as TabContent).fullTabTitle, tabsList);
                   }
 
+                  bool closable = isTabsClosable(tabsList.length);
+                  if (closable == false) {
+                    for (int i = 0; i < _controller.tabs.length; i++) {
+                      if (i == _controller.selectedIndex) {
+                        _controller.tabs[i].closable = true;
+                      } else {
+                        _controller.tabs[i].closable = closable;
+                      }
+                    }
+                    setState(() {});
+                  }
+
                   TabData newTabData = TabData(
+                    closable: closable,
                     text: _calculateTitle(newTabTitle, tabsList),
                     leading: (context, status) => TabTooltipLeading(
                       tooltip: newTabTitle,
@@ -119,7 +168,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
                     ),
                   );
 
-                  if (tabsList.length - 1 < maxTabs) {
+                  if (tabsList.length - 1 < maxTabsLead) {
                     _controller.addTab(newTabData);
                     setState(() {});
                   } else {
@@ -177,6 +226,13 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
       tab.text =
           _calculateTitle((tab.content as TabContent).fullTabTitle, tabsList);
     }
+
+    if (_controller.tabs.length <= maxTabsLeadClose) {
+      for (int i = 0; i < _controller.tabs.length; i++) {
+        _controller.tabs[i].closable = true;
+      }
+    }
+
     setState(() {});
   }
 
@@ -195,7 +251,8 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
           rebuildOverlay: () {
             _rebuildOverlayMenu();
           },
-          additionalTabs: additionalTabs, maxTabs: maxTabs,
+          additionalTabs: additionalTabs,
+          maxTabs: maxTabs,
         );
       },
     );
@@ -206,9 +263,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     if (_overlayEntry != null && _overlayEntry!.mounted)
       _overlayEntry!.remove();
     _overlayEntry = null;
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   void _rebuildOverlayMenu() {
