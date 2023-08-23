@@ -26,9 +26,10 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   OverlayState? overlayState;
   double _overlayMenuWidth = 300;
 
-  int maxTabs = 0;//15;
+  int maxTabs = 1;
   int minTabWidth = 52;
   int areaButtonsWidth = 97;
+  int tabViewWidth = 0;
   List<TabData> additionalTabs = [];
 
   @override
@@ -37,7 +38,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
     List<TabData> tabs = [];
 
-    int tabViewWidth = window.physicalSize.width.round();
+    tabViewWidth = window.physicalSize.width.round();
     maxTabs = (tabViewWidth - areaButtonsWidth) ~/ minTabWidth;
 
     for (int i = 0; i < tabTitles.length; i++) {
@@ -72,6 +73,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('new tabbed_view'),
