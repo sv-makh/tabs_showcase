@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tabbed_view/tabbed_view.dart';
 import 'package:tabs_showcase/widget/tabbed_view/overlay_menu_item.dart';
+import 'package:tabs_showcase/widget/tabbed_view/overlay_text_item.dart';
 import 'package:tabs_showcase/widget/tabbed_view/tab_content.dart';
 
 class OverlayMenu extends StatelessWidget {
@@ -64,16 +65,20 @@ class OverlayMenu extends StatelessWidget {
         children: [
           TextField(
             decoration: InputDecoration(
-                hintText: 'Search tabs', hintStyle: TextStyle(fontSize: 12)),
+              border: InputBorder.none,
+              icon: Icon(Icons.search, size: 18),
+              hintText: 'Search tabs',
+              hintStyle: TextStyle(fontSize: 12),
+            ),
           ),
-          _divider(),
-          _divider(),
-          Text('OPEN TABS', style: textStyle),
+          //_divider(),
+          Divider(),
+          OverlayTextItem(text: 'OPEN TABS'),
           OverlayMenuItem(
             currentTab: true,
             menuWidth: menuWidth,
-            text:
-            (controller.tabs[selectedIndex].content as TabContent).fullTabTitle,
+            text: (controller.tabs[selectedIndex].content as TabContent)
+                .fullTabTitle,
             onPressed: () {
               controller.selectedIndex = selectedIndex;
               closeOverlay();
@@ -84,8 +89,7 @@ class OverlayMenu extends StatelessWidget {
               closeTab(tabToRemove);
             },
             leadingColor:
-            (controller.tabs[selectedIndex].content as TabContent).color,
-            openTab: true,
+                (controller.tabs[selectedIndex].content as TabContent).color,
             rebuildOverlay: () {
               rebuildOverlay();
             },
@@ -98,30 +102,31 @@ class OverlayMenu extends StatelessWidget {
             shrinkWrap: true,
             itemCount: controller.tabs.length,
             itemBuilder: (BuildContext context, int index) {
-              return (index == selectedIndex) ? Container() : OverlayMenuItem(
-                currentTab: index == controller.selectedIndex,
-                menuWidth: menuWidth,
-                text:
-                    (controller.tabs[index].content as TabContent).fullTabTitle,
-                onPressed: () {
-                  controller.selectedIndex = index;
-                  closeOverlay();
-                },
-                onPressedClose: () {
-                  TabData tabToRemove = controller.getTabByIndex(index);
-                  controller.removeTab(index);
-                  closeTab(tabToRemove);
-                },
-                leadingColor:
-                    (controller.tabs[index].content as TabContent).color,
-                openTab: true,
-                rebuildOverlay: () {
-                  rebuildOverlay();
-                },
-                closeOverlay: () {
-                  closeOverlay();
-                },
-              );
+              return (index == selectedIndex)
+                  ? Container()
+                  : OverlayMenuItem(
+                      currentTab: index == controller.selectedIndex,
+                      menuWidth: menuWidth,
+                      text: (controller.tabs[index].content as TabContent)
+                          .fullTabTitle,
+                      onPressed: () {
+                        controller.selectedIndex = index;
+                        closeOverlay();
+                      },
+                      onPressedClose: () {
+                        TabData tabToRemove = controller.getTabByIndex(index);
+                        controller.removeTab(index);
+                        closeTab(tabToRemove);
+                      },
+                      leadingColor:
+                          (controller.tabs[index].content as TabContent).color,
+                      rebuildOverlay: () {
+                        rebuildOverlay();
+                      },
+                      closeOverlay: () {
+                        closeOverlay();
+                      },
+                    );
             },
           ),
           ListView.builder(
@@ -133,7 +138,7 @@ class OverlayMenu extends StatelessWidget {
                 currentTab: false,
                 menuWidth: menuWidth,
                 text:
-                (additionalTabs[index].content as TabContent).fullTabTitle,
+                    (additionalTabs[index].content as TabContent).fullTabTitle,
                 onPressed: () {
                   List<TabData> allTabs = List.from(controller.tabs);
                   TabData temp = allTabs[maxTabs - 1];
@@ -148,8 +153,7 @@ class OverlayMenu extends StatelessWidget {
                   additionalTabs.removeAt(index);
                 },
                 leadingColor:
-                (controller.tabs[index].content as TabContent).color,
-                openTab: true,
+                    (controller.tabs[index].content as TabContent).color,
                 rebuildOverlay: () {
                   rebuildOverlay();
                 },
@@ -159,8 +163,7 @@ class OverlayMenu extends StatelessWidget {
               );
             },
           ),
-          _divider(),
-          Text('RECENTLY CLOSED', style: textStyle),
+          OverlayTextItem(text: 'RECENTLY CLOSED'),
           ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
@@ -171,7 +174,6 @@ class OverlayMenu extends StatelessWidget {
                 menuWidth: menuWidth,
                 text: (closedTabs[index].content as TabContent).fullTabTitle,
                 leadingColor: (closedTabs[index].content as TabContent).color,
-                openTab: false,
                 rebuildOverlay: () {
                   rebuildOverlay();
                 },
