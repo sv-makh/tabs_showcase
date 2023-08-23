@@ -27,7 +27,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   double _overlayMenuWidth = 300;
 
   int maxTabs = 1;
-  int minTabWidth = 52;
+  int minTabWidth = 52;//11
   int areaButtonsWidth = 97;
   int tabViewWidth = 0;
   List<TabData> additionalTabs = [];
@@ -79,7 +79,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
         title: const Text('new tabbed_view'),
       ),
       body: TabbedViewTheme(
-        data: themeData(),
+        data: themeData(leftTabPadding: 10, rightTabPadding: 10),
         child: TabbedView(
           controller: _controller,
           tabsAreaButtonsBuilder: (context, tabsCount) {

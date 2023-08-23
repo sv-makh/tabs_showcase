@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:tabbed_view/tabbed_view.dart';
 
-TabbedViewThemeData themeData() {
+TabbedViewThemeData themeData({double leftTabPadding = 10, double rightTabPadding = 10}) {
   TabbedViewThemeData themeData = TabbedViewThemeData();
 
   BorderSide tabsAreaBorderSide =
-      const BorderSide(color: Color(0xffE8EAED), width: 3);
+      const BorderSide(color: Color(0xffE8EAED), width: 5);
 
   Color hoverColor = const Color(0xffF0F2F4);
   Color borderColor = const Color(0xff919598);
+  Color selectedColor = const Color(0xffFFFFFF);
 
   themeData.tabsArea
     ..buttonsAreaPadding = const EdgeInsets.only(right: 3)
     ..buttonIconSize = 18
     ..buttonPadding = const EdgeInsets.only(right: 3, left: 3, bottom: 3)
     ..border = Border(top: tabsAreaBorderSide, bottom: tabsAreaBorderSide)
-    ..middleGap = 1
-    ..color = const Color(0xffE8EAED);
+    ..middleGap = 0
+    ..color = Color(0xffE8EAED);
+
+  themeData.contentArea.decoration = BoxDecoration(color: selectedColor);
 
   Radius radius = const Radius.circular(5.0);
   BorderRadiusGeometry? tabBorderRadius =
@@ -24,7 +27,7 @@ TabbedViewThemeData themeData() {
 
   themeData.tab
     ..textStyle = const TextStyle(fontSize: 13)
-    ..padding = const EdgeInsets.fromLTRB(10, 4, 10, 4)
+    ..padding = EdgeInsets.fromLTRB(leftTabPadding, 4, rightTabPadding, 4)
     ..buttonsOffset = 8
     ..decoration = BoxDecoration(
       border: Border(
@@ -34,7 +37,7 @@ TabbedViewThemeData themeData() {
       color: const Color(0xffE8EAED),
     )
     ..selectedStatus.decoration = BoxDecoration(
-        color: const Color(0xffFFFFFF), borderRadius: tabBorderRadius)
+        color: selectedColor, borderRadius: tabBorderRadius)
     ..highlightedStatus.decoration =
         BoxDecoration(color: hoverColor, borderRadius: tabBorderRadius);
 
