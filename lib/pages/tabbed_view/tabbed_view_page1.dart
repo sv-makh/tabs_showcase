@@ -31,18 +31,19 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   int maxTabsLead = 1;
 
   int leadCloseWidth = 53;
+  int minLeadCloseWidth = 34;
   int leadWidth = 31;
-  int minLeadWidth = 11;
-  int areaButtonsWidth = 97;
+  int minLeadWidth = 13;
+  int areaButtonsWidth = 100;
   int tabViewWidth = 0;
   List<TabData> additionalTabs = [];
 
   double tabPadding = 10;
 
   void calculateMaxTabs(int tabViewWidth) {
-    maxTabs = (tabViewWidth - areaButtonsWidth) ~/ minLeadWidth;
+    maxTabs = (tabViewWidth - areaButtonsWidth - minLeadCloseWidth) ~/ minLeadWidth + 1;
     maxTabsLeadClose = (tabViewWidth - areaButtonsWidth) ~/ leadCloseWidth;
-    maxTabsLead = (tabViewWidth - areaButtonsWidth) ~/ leadWidth;
+    maxTabsLead = (tabViewWidth - areaButtonsWidth - leadCloseWidth) ~/ leadWidth + 1;
 
     //print(
     //    'maxTabsLeadClose=$maxTabsLeadClose maxTabsLead=$maxTabsLead maxTabs=$maxTabs');
@@ -51,10 +52,8 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   bool isTabsClosable(int numOfTabs) {
     bool closable = true;
     if (numOfTabs > maxTabsLeadClose) {
-      //&& (numOfTabs < maxTabsLead)) {
       closable = false;
     }
-    //print('closable $closable');
 
     return closable;
   }
@@ -108,7 +107,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('new tabbed_view $tabPadding'),
+        title: Text('new tabbed_view'),
       ),
       body: TabbedViewTheme(
         data:
@@ -156,9 +155,8 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
                   if (_controller.tabs.length >= maxTabsLead) {
                     if (tabPadding >= 1) {
-                      tabPadding -= (tabsList.length - 1 - maxTabsLead) ~/ ((maxTabs - maxTabsLead)/10) + 1;
+                      tabPadding = 10-((tabsList.length - 1 - maxTabsLead) / ((maxTabs - maxTabsLead)/10) + 2);
                       if (tabPadding < 0) tabPadding = 0;
-                      //tabPadding -= 1;
                     }
                   }
 
@@ -245,6 +243,20 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
         _controller.tabs[i].closable = true;
       }
     }
+
+/*    if (_controller.tabs.length >= maxTabsLead) {
+      print('tabsList.length - 1=${tabsList.length - 1} maxTabsLead=$maxTabsLead maxTabs=$maxTabs');
+      print('(tabsList.length - 1 - maxTabsLead)=${(tabsList.length - 1 - maxTabsLead)}');
+      print('(maxTabs - maxTabsLead)/10=${(maxTabs - maxTabsLead)/10}');
+      print('(tabsList.length - 1 - maxTabsLead) / ((maxTabs - maxTabsLead)/10)=${(tabsList.length - 1 - maxTabsLead) / ((maxTabs - maxTabsLead)/10)}');
+      if (tabPadding < 10) {
+        print((tabsList.length - 1 - maxTabsLead) / ((maxTabs - maxTabsLead)/10) + 1);
+        tabPadding = ((tabData.index - maxTabsLead) / ((maxTabs - maxTabsLead)/10) + 2);
+        if (tabPadding > 10) tabPadding = 10;
+        //tabPadding -= 1;
+      }
+      print('tabPadding=$tabPadding');
+    }*/
 
     setState(() {});
   }
