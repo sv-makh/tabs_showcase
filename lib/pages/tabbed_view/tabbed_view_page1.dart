@@ -40,6 +40,8 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
   double tabPadding = 10;
 
+  double currentDelta = 0;
+
   void calculateMaxTabs(int tabViewWidth) {
     maxTabs =
         (tabViewWidth - areaButtonsWidth - minLeadCloseWidth) ~/ minLeadWidth +
@@ -158,10 +160,10 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
                   if (_controller.tabs.length >= maxTabsLead) {
                     if (tabPadding >= 1) {
-                      tabPadding = 10 -
-                          ((tabsList.length - 1 - maxTabsLead) /
-                                  ((maxTabs - maxTabsLead) / 10) +
-                              2);
+                      currentDelta = ((tabsList.length - 1 - maxTabsLead) /
+                              ((maxTabs - maxTabsLead) / 10) +
+                          2);
+                      tabPadding = 10 - currentDelta;
                       if (tabPadding < 0) tabPadding = 0;
                     }
                   }
@@ -184,7 +186,6 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
                   );
 
                   if (tabsList.length - 1 < maxTabs) {
-                    //maxTabsLead) {
                     _controller.addTab(newTabData);
                   } else {
                     additionalTabs.add(newTabData);
@@ -250,6 +251,10 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
       }
     }
 
+    if (_controller.tabs.length >= maxTabsLead) {
+      tabPadding += currentDelta;
+      if (tabPadding > 10) tabPadding = 10;
+    }
 /*    if (_controller.tabs.length >= maxTabsLead) {
       print('tabsList.length - 1=${tabsList.length - 1} maxTabsLead=$maxTabsLead maxTabs=$maxTabs');
       print('(tabsList.length - 1 - maxTabsLead)=${(tabsList.length - 1 - maxTabsLead)}');
