@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:tabbed_view/tabbed_view.dart';
 
-import '../data/data.dart';
+import '../../data/data.dart';
 
 //https://pub.dev/packages/tabbed_view
 
-class TabbedViewPage extends StatefulWidget {
-  const TabbedViewPage({super.key});
+class TabbedViewPage0 extends StatefulWidget {
+  const TabbedViewPage0({super.key});
 
   @override
-  State<TabbedViewPage> createState() => _TabbedViewPageState();
+  State<TabbedViewPage0> createState() => _TabbedViewPage0State();
 }
 
-class _TabbedViewPageState extends State<TabbedViewPage> {
+class _TabbedViewPage0State extends State<TabbedViewPage0> {
   late TabbedViewController _controller;
 
   @override
