@@ -44,7 +44,7 @@ class OverlayMenu extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
               ),
               alignment: Alignment.topCenter,
-              padding: EdgeInsets.only(top: 5, bottom: 5),
+              padding: const EdgeInsets.only(top: 5, bottom: 5),
               width: menuWidth,
               height: MediaQuery.of(context).size.height - 200,
               child: _menu(),
@@ -56,7 +56,6 @@ class OverlayMenu extends StatelessWidget {
   }
 
   Widget _menu() {
-    TextStyle textStyle = const TextStyle(fontWeight: FontWeight.bold, fontSize: 10);
     int selectedIndex = controller.selectedIndex!;
 
     return SingleChildScrollView(
@@ -64,12 +63,15 @@ class OverlayMenu extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const TextField(
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              icon: Icon(Icons.search, size: 18),
-              hintText: 'Search tabs',
-              hintStyle: TextStyle(fontSize: 12),
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: TextField(
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                icon: Icon(Icons.search, size: 18),
+                hintText: 'Search tabs',
+                hintStyle: TextStyle(fontSize: 12),
+              ),
             ),
           ),
           const Divider(),
