@@ -45,7 +45,7 @@ class OverlayMenu extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
               ),
               alignment: Alignment.topCenter,
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.only(top: 5, bottom: 5),
               width: menuWidth,
               height: MediaQuery.of(context).size.height - 200,
               child: _menu(),
