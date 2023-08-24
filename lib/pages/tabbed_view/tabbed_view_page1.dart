@@ -27,20 +27,26 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   double _overlayMenuWidth = 300;
 
   int maxTabs = 1;
+
   //int maxTabsLeadClose = 1;
   int maxTabsLeadTextClose = 1;
-  int maxTabsLead = 1;
+  int maxTabsLeadText = 1;
 
-  //примерная длина вкладки, на которой иконка, 1 буква текста, многоточие, крестик
-  double leadTextCloseWidth = 68;
+  //примерная длина вкладки, на которой иконка, 3 символа, крестик
+  double leadTextCloseWidth = 80;
+
   //длина вкладки, на которой иконка, крестик
   double leadCloseWidth = 57;
+
   //длина вкладки с минимальными паддингами, на которой иконка
   double minLeadCloseWidth = 48;
+
   //длина вкладки, на которой иконка
   double leadWidth = 31;
+
   //длина вкладки с минимальными паддингами, на которой иконка
   double minLeadWidth = 20;
+
   //длина правой области с кнопками (добавить вкладку, показать меню)
   double buttonsAreaWidth = 80;
 
@@ -49,14 +55,18 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
   double currentDelta = 0;
 
+  bool tabsInitializing = true;
+
   @override
   void initState() {
     super.initState();
 
     _controller = TabbedViewController(initTabs(tabTitles, tabViews));
+    tabsInitializing = false;
   }
 
   List<TabData> initTabs(List<String> tabTitles, List<Widget> tabViews) {
+    tabsInitializing = true;
     List<TabData> tabs = [];
 
     for (int i = 0; i < tabTitles.length; i++) {
@@ -88,7 +98,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.width);
+    print('screen=${MediaQuery.of(context).size.width}');
     calculateMaxTabs(MediaQuery.of(context).size.width);
 
     return Scaffold(
@@ -134,13 +144,14 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   void calculateMaxTabs(double tabViewWidth) {
     //длина области, в которой находятся вкладки
     double tabsAreaWidth = tabViewWidth - buttonsAreaWidth;
-    
-    maxTabs = (tabsAreaWidth - minLeadCloseWidth ) ~/ minLeadWidth + 1;
+
+    maxTabs = (tabsAreaWidth - minLeadCloseWidth) ~/ minLeadWidth + 1;
     //maxTabsLeadClose = tabsAreaWidth ~/ leadCloseWidth;
-    maxTabsLead = (tabsAreaWidth - leadCloseWidth) ~/ leadWidth + 1;
+    maxTabsLeadText = (tabsAreaWidth - leadCloseWidth) ~/ leadWidth + 1;
     maxTabsLeadTextClose = tabsAreaWidth ~/ leadTextCloseWidth;
 
-    print('maxTabsLead=$maxTabsLead maxTabs=$maxTabs');
+    print(
+        'maxTabsLeadTextClose=$maxTabsLeadTextClose maxTabsLead=$maxTabsLeadText maxTabs=$maxTabs');
   }
 
   bool isTabsClosable(int numOfTabs) {
@@ -161,18 +172,17 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
   void _onAdd() {
     List<String> tabsList = _controller.tabs
-        .map((element) =>
-    (element.content as TabContent).fullTabTitle)
+        .map((element) => (element.content as TabContent).fullTabTitle)
         .toList();
     String newTabTitle =
         'new ${tabsList.length.toString()}th tab ${DateTime.now().millisecond}';
     tabsList.add(newTabTitle);
-    Color color = Colors.primaries[
-    (tabsList.length - 1) % Colors.primaries.length];
+    Color color =
+        Colors.primaries[(tabsList.length - 1) % Colors.primaries.length];
 
     for (var tab in _controller.tabs) {
-      tab.text = _calculateTitle(
-          (tab.content as TabContent).fullTabTitle, tabsList);
+      tab.text =
+          _calculateTitle((tab.content as TabContent).fullTabTitle, tabsList);
     }
 
     bool closable = isTabsClosable(tabsList.length);
@@ -215,8 +225,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
       ),
     );
 
-    if (tabsList.length - 1 < maxTabs)
-      _controller.addTab(newTabData);
+    if (tabsList.length - 1 < maxTabs) _controller.addTab(newTabData);
 
     setState(() {});
   }
@@ -283,38 +292,52 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     _overlayEntry!.markNeedsBuild();
   }
 
+  int fullTabLength = 0;
+
   //возвращаем заголовок для вкладки
   String _calculateTitle(String title, List<String> tabs) {
     int median = _calculateMedian(tabs);
+    print('tabs.length=${tabs.length} maxTabsLeadTextClose=$maxTabsLeadTextClose tabsInitialized=$tabsInitializing');
+    String result = '';
 
-    int croppedLength = median;
-    int tabsWithoutCorrection = 5;
-    int charsForCorrection = 2;
+    if ((tabs.length <= maxTabsLeadTextClose) || tabsInitializing) {
+      print('here');
+      int croppedLength = median;
+      int tabsWithoutCorrection = 5;
+      int charsForCorrection = 2;
 
-    //вносим дополнительное уменьшение размера заголовков при увеличении количества вкладок
-    if (tabs.length >= tabsWithoutCorrection) {
-      int correction =
-          charsForCorrection * (tabs.length - tabsWithoutCorrection);
-      if ((croppedLength - correction) >= 0) {
-        croppedLength -= correction;
-      } else {
-        croppedLength = 0;
+      //вносим дополнительное уменьшение размера заголовков при увеличении количества вкладок
+      if (tabs.length >= tabsWithoutCorrection) {
+        int correction =
+            charsForCorrection * (tabs.length - tabsWithoutCorrection);
+        if ((croppedLength - correction) >= 0) {
+          croppedLength -= correction;
+        } else {
+          croppedLength = 0;
+        }
       }
-    }
 
-    if (title.length <= croppedLength) {
-      return title.padRight(croppedLength - title.length);
-    } else {
-      if (croppedLength >= 3) {
-        return '${title.substring(0, croppedLength - 3)}...';
-      } else if (croppedLength == 2) {
-        return '..';
-      } else if (croppedLength == 1) {
-        return '.';
+      print('tabs.length=${tabs.length} croppedLength=$croppedLength');
+
+      if (title.length <= croppedLength) {
+        result = title.padRight(croppedLength - title.length);
       } else {
-        return '';
+        if (croppedLength >= 3) {
+          result = '${title.substring(0, croppedLength - 3)}...';
+        } else if (croppedLength == 2) {
+          result = '..';
+        } else if (croppedLength == 1) {
+          result = '.';
+        } else {
+          result = '';
+        }
       }
+      fullTabLength = result.length;
+    } else if ((tabs.length > maxTabsLeadTextClose) &&
+        (tabs.length <= maxTabsLeadText)) {
+
     }
+    return result;
   }
 
 //вычислениие медианной длины для списка заголовков вкладок
