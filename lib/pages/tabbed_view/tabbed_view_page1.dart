@@ -43,42 +43,22 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
   double currentDelta = 0;
 
-  void calculateMaxTabs(int tabViewWidth) {
-    maxTabs =
-        (tabViewWidth - areaButtonsWidth - minLeadCloseWidth) ~/ minLeadWidth +
-            1;
-    maxTabsLeadClose = (tabViewWidth - areaButtonsWidth) ~/ leadCloseWidth;
-    maxTabsLead =
-        (tabViewWidth - areaButtonsWidth - leadCloseWidth) ~/ leadWidth + 1;
 
-    print(
-        'maxTabsLeadClose=$maxTabsLeadClose maxTabsLead=$maxTabsLead maxTabs=$maxTabs');
-  }
-
-  bool isTabsClosable(int numOfTabs) {
-    bool closable = true;
-    if (numOfTabs > maxTabsLeadClose) {
-      closable = false;
-    }
-
-    return closable;
-  }
 
   @override
   void initState() {
     super.initState();
 
+    _controller = TabbedViewController(initTabs(tabTitles, tabViews));
+  }
+
+  List<TabData> initTabs(List<String> tabTitles, List<Widget> tabViews) {
     List<TabData> tabs = [];
-
-    tabViewWidth = window.physicalSize.width.round();
-    calculateMaxTabs(tabViewWidth);
-
-    bool closable = isTabsClosable(tabTitles.length);
 
     for (int i = 0; i < tabTitles.length; i++) {
       Color color = Colors.primaries[i % Colors.primaries.length];
       var tabData = TabData(
-        closable: (i == 0) ? true : closable,
+        closable: true,
         text: _calculateTitle(tabTitles[i], tabTitles),
         leading: (context, status) => TabTooltipLeading(
           tooltip: tabTitles[i],
@@ -90,15 +70,10 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
           color: color,
         ),
       );
-
-      if (i < maxTabsLead) {
-        tabs.add(tabData);
-      } else {
-        additionalTabs.add(tabData);
-      }
+      tabs.add(tabData);
     }
 
-    _controller = TabbedViewController(tabs);
+    return tabs;
   }
 
   @override
@@ -121,11 +96,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
         child: TabbedView(
           controller: _controller,
           onTabSelection: (index) {
-            if (_controller.tabs.length > maxTabsLeadClose) {
-              for (int i = 0; i < _controller.tabs.length; i++) {
-                _controller.tabs[i].closable = (i == index) ? true : false;
-              }
-            }
+            _onSelect(index);
           },
           tabsAreaButtonsBuilder: (context, tabsCount) {
             List<TabButton> buttons = [];
@@ -133,87 +104,10 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
               TabButton(
                 icon: IconProvider.data(Icons.add),
                 onPressed: () {
-                  List<String> tabsList = _controller.tabs
-                      .map((element) =>
-                          (element.content as TabContent).fullTabTitle)
-                      .toList();
-                  String newTabTitle =
-                      'new ${tabsList.length.toString()}th tab ${DateTime.now().millisecond}';
-                  tabsList.add(newTabTitle);
-                  Color color = Colors.primaries[
-                      (tabsList.length - 1) % Colors.primaries.length];
-
-                  for (var tab in _controller.tabs) {
-                    tab.text = _calculateTitle(
-                        (tab.content as TabContent).fullTabTitle, tabsList);
-                  }
-
-                  bool closable = isTabsClosable(tabsList.length);
-                  if (closable == false) {
-                    for (int i = 0; i < _controller.tabs.length; i++) {
-                      if (i == _controller.selectedIndex) {
-                        _controller.tabs[i].closable = true;
-                      } else {
-                        _controller.tabs[i].closable = closable;
-                      }
-                    }
-                  }
-
-                  if (_controller.tabs.length >= maxTabsLead) {
-                    if (tabPadding >= 1) {
-                      currentDelta = ((tabsList.length - 1 - maxTabsLead) /
-                              ((maxTabs - maxTabsLead) / 10) +
-                          2);
-                      oldTabPadding = tabPadding;
-                      tabPadding = 10 - currentDelta;
-                      if (tabPadding < 0) tabPadding = 0;
-                      print('add tabPadding=$tabPadding currentDelta=$currentDelta');
-                    }
-                  }
-
-                  TabData newTabData = TabData(
-                    closable: closable,
-                    text: _calculateTitle(newTabTitle, tabsList),
-                    leading: (context, status) => TabTooltipLeading(
-                      tooltip: newTabTitle,
-                      color: color,
-                    ),
-                    content: TabContent(
-                      content: const Icon(
-                        Icons.add,
-                        size: 60,
-                      ),
-                      fullTabTitle: newTabTitle,
-                      color: color,
-                    ),
-                  );
-
-                  if (tabsList.length - 1 < maxTabs) {
-                    _controller.addTab(newTabData);
-                  } else {
-                    additionalTabs.add(newTabData);
-                  }
-
-                  setState(() {});
+                  _onAdd();
                 },
               ),
             );
-/*            buttons.add(
-              TabButton(
-                icon: IconProvider.data(Icons.arrow_downward),
-                menuBuilder: (context) {
-                  return _controller.tabs.map((element) {
-                    return TabbedViewMenuItem(
-                      text: (element.content as TabContent).fullTabTitle,
-                      onSelection: () {
-                        _controller.selectedIndex = element.index;
-                      },
-                    );
-                  }).toList();
-                },
-                onPressed: () {},
-              ),
-            );*/
             buttons.add(
               TabButton(
                 icon: IconProvider.data(Icons.keyboard_arrow_down),
@@ -230,6 +124,99 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
         ),
       ),
     );
+  }
+
+  void calculateMaxTabs(int tabViewWidth) {
+    maxTabs =
+        (tabViewWidth - areaButtonsWidth - minLeadCloseWidth) ~/ minLeadWidth +
+            1;
+    maxTabsLeadClose = (tabViewWidth - areaButtonsWidth) ~/ leadCloseWidth;
+    maxTabsLead =
+        (tabViewWidth - areaButtonsWidth - leadCloseWidth) ~/ leadWidth + 1;
+
+    print(
+        'maxTabsLeadClose=$maxTabsLeadClose maxTabsLead=$maxTabsLead maxTabs=$maxTabs');
+  }
+
+  bool isTabsClosable(int numOfTabs) {
+    bool closable = true;
+    if (numOfTabs > maxTabsLeadClose) {
+      closable = false;
+    }
+    return closable;
+  }
+
+  void _onSelect(int? index) {
+    if ((index != null) && (_controller.tabs.length > maxTabsLeadClose)) {
+      for (int i = 0; i < _controller.tabs.length; i++) {
+        _controller.tabs[i].closable = (i == index) ? true : false;
+      }
+    }
+  }
+
+  void _onAdd() {
+    List<String> tabsList = _controller.tabs
+        .map((element) =>
+    (element.content as TabContent).fullTabTitle)
+        .toList();
+    String newTabTitle =
+        'new ${tabsList.length.toString()}th tab ${DateTime.now().millisecond}';
+    tabsList.add(newTabTitle);
+    Color color = Colors.primaries[
+    (tabsList.length - 1) % Colors.primaries.length];
+
+    for (var tab in _controller.tabs) {
+      tab.text = _calculateTitle(
+          (tab.content as TabContent).fullTabTitle, tabsList);
+    }
+
+    bool closable = isTabsClosable(tabsList.length);
+    if (closable == false) {
+      for (int i = 0; i < _controller.tabs.length; i++) {
+        if (i == _controller.selectedIndex) {
+          _controller.tabs[i].closable = true;
+        } else {
+          _controller.tabs[i].closable = closable;
+        }
+      }
+    }
+
+    if (_controller.tabs.length >= maxTabsLead) {
+      if (tabPadding >= 1) {
+        currentDelta = ((tabsList.length - 1 - maxTabsLead) /
+            ((maxTabs - maxTabsLead) / 10) +
+            2);
+        oldTabPadding = tabPadding;
+        tabPadding = 10 - currentDelta;
+        if (tabPadding < 0) tabPadding = 0;
+        print('add tabPadding=$tabPadding currentDelta=$currentDelta');
+      }
+    }
+
+    TabData newTabData = TabData(
+      closable: closable,
+      text: _calculateTitle(newTabTitle, tabsList),
+      leading: (context, status) => TabTooltipLeading(
+        tooltip: newTabTitle,
+        color: color,
+      ),
+      content: TabContent(
+        content: const Icon(
+          Icons.add,
+          size: 60,
+        ),
+        fullTabTitle: newTabTitle,
+        color: color,
+      ),
+    );
+
+    if (tabsList.length - 1 < maxTabs) {
+      _controller.addTab(newTabData);
+    } else {
+      additionalTabs.add(newTabData);
+    }
+
+    setState(() {});
   }
 
   void _onClose(TabData tabData) {
