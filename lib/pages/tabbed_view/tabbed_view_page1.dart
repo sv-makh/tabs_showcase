@@ -27,8 +27,6 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   double _overlayMenuWidth = 300;
 
   int maxTabs = 1;
-
-  //int maxTabsLeadClose = 1;
   int maxTabsLeadTextClose = 1;
   int maxTabsLeadText = 1;
 
@@ -74,10 +72,11 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
       var tabData = TabData(
         closable: true,
         text: _calculateTitle(tabTitles[i], tabTitles),
-        leading: (context, status) => TabTooltipLeading(
-          tooltip: tabTitles[i],
-          color: color,
-        ),
+        leading: (context, status) =>
+            TabTooltipLeading(
+              tooltip: tabTitles[i],
+              color: color,
+            ),
         content: TabContent(
           content: tabViews[i],
           fullTabTitle: tabTitles[i],
@@ -98,8 +97,14 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
   @override
   Widget build(BuildContext context) {
-    print('screen=${MediaQuery.of(context).size.width}');
-    calculateMaxTabs(MediaQuery.of(context).size.width);
+    print('screen=${MediaQuery
+        .of(context)
+        .size
+        .width}');
+    calculateMaxTabs(MediaQuery
+        .of(context)
+        .size
+        .width);
 
     return Scaffold(
       appBar: AppBar(
@@ -107,7 +112,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
       ),
       body: TabbedViewTheme(
         data:
-            themeData(leftTabPadding: tabPadding, rightTabPadding: tabPadding),
+        themeData(leftTabPadding: tabPadding, rightTabPadding: tabPadding),
         child: TabbedView(
           controller: _controller,
           onTabSelection: (index) {
@@ -156,6 +161,9 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
   bool isTabsClosable(int numOfTabs) {
     bool closable = true;
+    if ((numOfTabs > maxTabsLeadTextClose) && (numOfTabs <= maxTabsLeadText)) {
+      closable = false;
+    }
 /*    if (numOfTabs > maxTabsLeadClose) {
       closable = false;
     }*/
@@ -175,10 +183,12 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
         .map((element) => (element.content as TabContent).fullTabTitle)
         .toList();
     String newTabTitle =
-        'new ${tabsList.length.toString()}th tab ${DateTime.now().millisecond}';
+        'new ${tabsList.length.toString()}th tab ${DateTime
+        .now()
+        .millisecond}';
     tabsList.add(newTabTitle);
     Color color =
-        Colors.primaries[(tabsList.length - 1) % Colors.primaries.length];
+    Colors.primaries[(tabsList.length - 1) % Colors.primaries.length];
 
     for (var tab in _controller.tabs) {
       tab.text =
@@ -186,7 +196,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     }
 
     bool closable = isTabsClosable(tabsList.length);
-/*    if (closable == false) {
+    if (closable == false) {
       for (int i = 0; i < _controller.tabs.length; i++) {
         if (i == _controller.selectedIndex) {
           _controller.tabs[i].closable = true;
@@ -194,7 +204,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
           _controller.tabs[i].closable = closable;
         }
       }
-    }*/
+    }
 
 /*    if (_controller.tabs.length >= maxTabsLead) {
       if (tabPadding >= 1) {
@@ -211,10 +221,11 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     TabData newTabData = TabData(
       closable: closable,
       text: _calculateTitle(newTabTitle, tabsList),
-      leading: (context, status) => TabTooltipLeading(
-        tooltip: newTabTitle,
-        color: color,
-      ),
+      leading: (context, status) =>
+          TabTooltipLeading(
+            tooltip: newTabTitle,
+            color: color,
+          ),
       content: TabContent(
         content: const Icon(
           Icons.add,
@@ -297,46 +308,67 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   //возвращаем заголовок для вкладки
   String _calculateTitle(String title, List<String> tabs) {
     int median = _calculateMedian(tabs);
-    print('tabs.length=${tabs.length} maxTabsLeadTextClose=$maxTabsLeadTextClose tabsInitialized=$tabsInitializing');
     String result = '';
 
     if ((tabs.length <= maxTabsLeadTextClose) || tabsInitializing) {
-      print('here');
-      int croppedLength = median;
-      int tabsWithoutCorrection = 5;
-      int charsForCorrection = 2;
 
-      //вносим дополнительное уменьшение размера заголовков при увеличении количества вкладок
-      if (tabs.length >= tabsWithoutCorrection) {
-        int correction =
-            charsForCorrection * (tabs.length - tabsWithoutCorrection);
-        if ((croppedLength - correction) >= 0) {
-          croppedLength -= correction;
-        } else {
-          croppedLength = 0;
-        }
-      }
+      //уменьшение размера заголовков при увеличении количества вкладок
+      result = _correction(
+          title: title,
+          numOfTabs: tabs.length,
+          croppedLength: median,
+          tabsWithoutCorrection: 5,
+          charsForCorrection: 1);
 
-      print('tabs.length=${tabs.length} croppedLength=$croppedLength');
-
-      if (title.length <= croppedLength) {
-        result = title.padRight(croppedLength - title.length);
-      } else {
-        if (croppedLength >= 3) {
-          result = '${title.substring(0, croppedLength - 3)}...';
-        } else if (croppedLength == 2) {
-          result = '..';
-        } else if (croppedLength == 1) {
-          result = '.';
-        } else {
-          result = '';
-        }
-      }
       fullTabLength = result.length;
     } else if ((tabs.length > maxTabsLeadTextClose) &&
         (tabs.length <= maxTabsLeadText)) {
+      print('fullTabLength=$fullTabLength');
+      int startLength = fullTabLength + 2;
 
+      result = _correction(title: title,
+        numOfTabs: tabs.length,
+        croppedLength: startLength,
+        tabsWithoutCorrection: 0,
+        charsForCorrection: 1,);
     }
+    return result;
+  }
+
+  String _correction({
+    required String title,
+    required int numOfTabs,
+    required int croppedLength,
+    required int tabsWithoutCorrection,
+    required int charsForCorrection,
+  }) {
+    String result = '';
+
+    if (numOfTabs >= tabsWithoutCorrection) {
+      int correction = charsForCorrection * (numOfTabs - tabsWithoutCorrection);
+      if ((croppedLength - correction) >= 0) {
+        croppedLength -= correction;
+      } else {
+        croppedLength = 0;
+      }
+    }
+
+    print('tabs.length=${numOfTabs} croppedLength=$croppedLength');
+
+    if (title.length <= croppedLength) {
+      result = title.padRight(croppedLength - title.length);
+    } else {
+      if (croppedLength >= 3) {
+        result = '${title.substring(0, croppedLength - 3)}...';
+      } else if (croppedLength == 2) {
+        result = '..';
+      } else if (croppedLength == 1) {
+        result = '.';
+      } else {
+        result = '';
+      }
+    }
+
     return result;
   }
 
