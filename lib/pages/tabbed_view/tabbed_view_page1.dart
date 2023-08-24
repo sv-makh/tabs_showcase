@@ -27,23 +27,27 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   double _overlayMenuWidth = 300;
 
   int maxTabs = 1;
-  int maxTabsLeadClose = 1;
+  //int maxTabsLeadClose = 1;
+  int maxTabsLeadTextClose = 1;
   int maxTabsLead = 1;
 
-  int leadCloseWidth = 53;
-  int minLeadCloseWidth = 34;
-  int leadWidth = 31;
-  int minLeadWidth = 13;
-  int areaButtonsWidth = 100;
-  int tabViewWidth = 0;
-  List<TabData> additionalTabs = [];
+  //примерная длина вкладки, на которой иконка, 1 буква текста, многоточие, крестик
+  double leadTextCloseWidth = 68;
+  //длина вкладки, на которой иконка, крестик
+  double leadCloseWidth = 57;
+  //длина вкладки с минимальными паддингами, на которой иконка
+  double minLeadCloseWidth = 48;
+  //длина вкладки, на которой иконка
+  double leadWidth = 31;
+  //длина вкладки с минимальными паддингами, на которой иконка
+  double minLeadWidth = 20;
+  //длина правой области с кнопками (добавить вкладку, показать меню)
+  double buttonsAreaWidth = 80;
 
   double tabPadding = 10;
   double oldTabPadding = 0;
 
   double currentDelta = 0;
-
-
 
   @override
   void initState() {
@@ -84,7 +88,8 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
   @override
   Widget build(BuildContext context) {
-    calculateMaxTabs(MediaQuery.of(context).size.width.round());
+    print(MediaQuery.of(context).size.width);
+    calculateMaxTabs(MediaQuery.of(context).size.width);
 
     return Scaffold(
       appBar: AppBar(
@@ -126,32 +131,32 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     );
   }
 
-  void calculateMaxTabs(int tabViewWidth) {
-    maxTabs =
-        (tabViewWidth - areaButtonsWidth - minLeadCloseWidth) ~/ minLeadWidth +
-            1;
-    maxTabsLeadClose = (tabViewWidth - areaButtonsWidth) ~/ leadCloseWidth;
-    maxTabsLead =
-        (tabViewWidth - areaButtonsWidth - leadCloseWidth) ~/ leadWidth + 1;
+  void calculateMaxTabs(double tabViewWidth) {
+    //длина области, в которой находятся вкладки
+    double tabsAreaWidth = tabViewWidth - buttonsAreaWidth;
+    
+    maxTabs = (tabsAreaWidth - minLeadCloseWidth ) ~/ minLeadWidth + 1;
+    //maxTabsLeadClose = tabsAreaWidth ~/ leadCloseWidth;
+    maxTabsLead = (tabsAreaWidth - leadCloseWidth) ~/ leadWidth + 1;
+    maxTabsLeadTextClose = tabsAreaWidth ~/ leadTextCloseWidth;
 
-    print(
-        'maxTabsLeadClose=$maxTabsLeadClose maxTabsLead=$maxTabsLead maxTabs=$maxTabs');
+    print('maxTabsLead=$maxTabsLead maxTabs=$maxTabs');
   }
 
   bool isTabsClosable(int numOfTabs) {
     bool closable = true;
-    if (numOfTabs > maxTabsLeadClose) {
+/*    if (numOfTabs > maxTabsLeadClose) {
       closable = false;
-    }
+    }*/
     return closable;
   }
 
   void _onSelect(int? index) {
-    if ((index != null) && (_controller.tabs.length > maxTabsLeadClose)) {
+/*    if ((index != null) && (_controller.tabs.length > maxTabsLeadClose)) {
       for (int i = 0; i < _controller.tabs.length; i++) {
         _controller.tabs[i].closable = (i == index) ? true : false;
       }
-    }
+    }*/
   }
 
   void _onAdd() {
@@ -171,7 +176,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     }
 
     bool closable = isTabsClosable(tabsList.length);
-    if (closable == false) {
+/*    if (closable == false) {
       for (int i = 0; i < _controller.tabs.length; i++) {
         if (i == _controller.selectedIndex) {
           _controller.tabs[i].closable = true;
@@ -179,9 +184,9 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
           _controller.tabs[i].closable = closable;
         }
       }
-    }
+    }*/
 
-    if (_controller.tabs.length >= maxTabsLead) {
+/*    if (_controller.tabs.length >= maxTabsLead) {
       if (tabPadding >= 1) {
         currentDelta = ((tabsList.length - 1 - maxTabsLead) /
             ((maxTabs - maxTabsLead) / 10) +
@@ -191,7 +196,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
         if (tabPadding < 0) tabPadding = 0;
         print('add tabPadding=$tabPadding currentDelta=$currentDelta');
       }
-    }
+    }*/
 
     TabData newTabData = TabData(
       closable: closable,
@@ -210,24 +215,14 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
       ),
     );
 
-    if (tabsList.length - 1 < maxTabs) {
+    if (tabsList.length - 1 < maxTabs)
       _controller.addTab(newTabData);
-    } else {
-      additionalTabs.add(newTabData);
-    }
 
     setState(() {});
   }
 
   void _onClose(TabData tabData) {
     _closedTabs.add(tabData);
-
-    print('tabs.length=${_controller.tabs.length} ');
-
-    if ((_controller.tabs.length < maxTabs) && (additionalTabs.isNotEmpty)) {
-      _controller.addTab(additionalTabs[0]);
-      additionalTabs.removeAt(0);
-    }
 
     List<String> tabsList = _controller.tabs
         .map((element) => (element.content as TabContent).fullTabTitle)
@@ -237,19 +232,17 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
           _calculateTitle((tab.content as TabContent).fullTabTitle, tabsList);
     }
 
-    if (_controller.tabs.length <= maxTabsLeadClose) {
+/*    if (_controller.tabs.length <= maxTabsLeadClose) {
       for (int i = 0; i < _controller.tabs.length; i++) {
         _controller.tabs[i].closable = true;
       }
-    }
+    }*/
 
-    if (_controller.tabs.length >= maxTabsLead) {
+/*    if (_controller.tabs.length >= maxTabsLead) {
       tabPadding = oldTabPadding;
-      //tabPadding += currentDelta;
       if (tabPadding > 10) tabPadding = 10;
-      //oldTabPadding = tabPadding;
       print('delete tabPadding=$tabPadding currentDelta=$currentDelta');
-    }
+    }*/
 
     if (_controller.tabs.isNotEmpty) _controller.selectedIndex = 0;
     _controller.tabs[0].closable = true;
@@ -272,7 +265,6 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
           rebuildOverlay: () {
             _rebuildOverlayMenu();
           },
-          additionalTabs: additionalTabs,
           maxTabs: maxTabs,
         );
       },
