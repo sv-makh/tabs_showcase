@@ -39,6 +39,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   List<TabData> additionalTabs = [];
 
   double tabPadding = 10;
+  double oldTabPadding = 0;
 
   double currentDelta = 0;
 
@@ -50,8 +51,8 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     maxTabsLead =
         (tabViewWidth - areaButtonsWidth - leadCloseWidth) ~/ leadWidth + 1;
 
-    //print(
-    //    'maxTabsLeadClose=$maxTabsLeadClose maxTabsLead=$maxTabsLead maxTabs=$maxTabs');
+    print(
+        'maxTabsLeadClose=$maxTabsLeadClose maxTabsLead=$maxTabsLead maxTabs=$maxTabs');
   }
 
   bool isTabsClosable(int numOfTabs) {
@@ -163,8 +164,10 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
                       currentDelta = ((tabsList.length - 1 - maxTabsLead) /
                               ((maxTabs - maxTabsLead) / 10) +
                           2);
+                      oldTabPadding = tabPadding;
                       tabPadding = 10 - currentDelta;
                       if (tabPadding < 0) tabPadding = 0;
+                      print('add tabPadding=$tabPadding currentDelta=$currentDelta');
                     }
                   }
 
@@ -195,7 +198,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
                 },
               ),
             );
-            buttons.add(
+/*            buttons.add(
               TabButton(
                 icon: IconProvider.data(Icons.arrow_downward),
                 menuBuilder: (context) {
@@ -210,7 +213,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
                 },
                 onPressed: () {},
               ),
-            );
+            );*/
             buttons.add(
               TabButton(
                 icon: IconProvider.data(Icons.keyboard_arrow_down),
@@ -232,6 +235,8 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   void _onClose(TabData tabData) {
     _closedTabs.add(tabData);
 
+    print('tabs.length=${_controller.tabs.length} ');
+
     if ((_controller.tabs.length < maxTabs) && (additionalTabs.isNotEmpty)) {
       _controller.addTab(additionalTabs[0]);
       additionalTabs.removeAt(0);
@@ -252,22 +257,15 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     }
 
     if (_controller.tabs.length >= maxTabsLead) {
-      tabPadding += currentDelta;
+      tabPadding = oldTabPadding;
+      //tabPadding += currentDelta;
       if (tabPadding > 10) tabPadding = 10;
+      //oldTabPadding = tabPadding;
+      print('delete tabPadding=$tabPadding currentDelta=$currentDelta');
     }
-/*    if (_controller.tabs.length >= maxTabsLead) {
-      print('tabsList.length - 1=${tabsList.length - 1} maxTabsLead=$maxTabsLead maxTabs=$maxTabs');
-      print('(tabsList.length - 1 - maxTabsLead)=${(tabsList.length - 1 - maxTabsLead)}');
-      print('(maxTabs - maxTabsLead)/10=${(maxTabs - maxTabsLead)/10}');
-      print('(tabsList.length - 1 - maxTabsLead) / ((maxTabs - maxTabsLead)/10)=${(tabsList.length - 1 - maxTabsLead) / ((maxTabs - maxTabsLead)/10)}');
-      if (tabPadding < 10) {
-        print((tabsList.length - 1 - maxTabsLead) / ((maxTabs - maxTabsLead)/10) + 1);
-        tabPadding = ((tabData.index - maxTabsLead) / ((maxTabs - maxTabsLead)/10) + 2);
-        if (tabPadding > 10) tabPadding = 10;
-        //tabPadding -= 1;
-      }
-      print('tabPadding=$tabPadding');
-    }*/
+
+    if (_controller.tabs.isNotEmpty) _controller.selectedIndex = 0;
+    _controller.tabs[0].closable = true;
 
     setState(() {});
   }

@@ -28,13 +28,14 @@ class OverlayMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      ModalBarrier(
-        onDismiss: () {
-          closeOverlay();
-        },
-      ),
-      Positioned(
+    return Stack(
+      children: [
+        ModalBarrier(
+          onDismiss: () {
+            closeOverlay();
+          },
+        ),
+        Positioned(
           left: MediaQuery.of(context).size.width - menuWidth - 5,
           top: 100,
           child: Material(
@@ -50,8 +51,10 @@ class OverlayMenu extends StatelessWidget {
               height: MediaQuery.of(context).size.height - 200,
               child: _menu(),
             ),
-          )),
-    ]);
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _menu() {
@@ -71,8 +74,7 @@ class OverlayMenu extends StatelessWidget {
               hintStyle: TextStyle(fontSize: 12),
             ),
           ),
-          //_divider(),
-          Divider(),
+          const Divider(),
           OverlayTextItem(text: 'OPEN TABS'),
           OverlayMenuItem(
             currentTab: true,
@@ -185,12 +187,6 @@ class OverlayMenu extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _divider() {
-    return const SizedBox(
-      height: 10,
     );
   }
 }
