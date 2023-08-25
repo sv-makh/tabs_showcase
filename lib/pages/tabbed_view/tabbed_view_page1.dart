@@ -50,6 +50,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
   //паддинг у вкладки
   double tabPadding = 10;
+
   //изначальный паддинг
   double startPadding = 10;
   double oldTabPadding = 0;
@@ -75,11 +76,10 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
       var tabData = TabData(
         closable: true,
         text: _calculateTitle(tabTitles[i], tabTitles),
-        leading: (context, status) =>
-            TabTooltipLeading(
-              tooltip: tabTitles[i],
-              color: color,
-            ),
+        leading: (context, status) => TabTooltipLeading(
+          tooltip: tabTitles[i],
+          color: color,
+        ),
         content: TabContent(
           content: tabViews[i],
           fullTabTitle: tabTitles[i],
@@ -100,14 +100,8 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
   @override
   Widget build(BuildContext context) {
-    print('screen=${MediaQuery
-        .of(context)
-        .size
-        .width}');
-    calculateMaxTabs(MediaQuery
-        .of(context)
-        .size
-        .width);
+    print('screen=${MediaQuery.of(context).size.width}');
+    calculateMaxTabs(MediaQuery.of(context).size.width);
 
     return Scaffold(
       appBar: AppBar(
@@ -115,7 +109,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
       ),
       body: TabbedViewTheme(
         data:
-        themeData(leftTabPadding: tabPadding, rightTabPadding: tabPadding),
+            themeData(leftTabPadding: tabPadding, rightTabPadding: tabPadding),
         child: TabbedView(
           controller: _controller,
           onTabSelection: (index) {
@@ -164,7 +158,8 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
   bool isTabsClosable(int numOfTabs) {
     bool closable = true;
-    if ((numOfTabs > maxTabsLeadTextClose)){// && (numOfTabs <= maxTabsLead)) {
+    if ((numOfTabs > maxTabsLeadTextClose)) {
+      // && (numOfTabs <= maxTabsLead)) {
       closable = false;
     }
 /*    if (numOfTabs > maxTabsLeadClose) {
@@ -186,12 +181,10 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
         .map((element) => (element.content as TabContent).fullTabTitle)
         .toList();
     String newTabTitle =
-        'new ${tabsList.length.toString()}th tab ${DateTime
-        .now()
-        .millisecond}';
+        'new ${tabsList.length.toString()}th tab ${DateTime.now().millisecond}';
     tabsList.add(newTabTitle);
     Color color =
-    Colors.primaries[(tabsList.length - 1) % Colors.primaries.length];
+        Colors.primaries[(tabsList.length - 1) % Colors.primaries.length];
 
     for (var tab in _controller.tabs) {
       tab.text =
@@ -210,25 +203,26 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     }
 
     if (_controller.tabs.length >= maxTabsLead) {
-      if (tabPadding >= 1) {
-        currentDelta = ( ((tabsList.length - 1 - maxTabsLead) /
-            ((maxTabs - maxTabsLead) / startPadding) +
-            2) ) / 1.5;
+      _calculateTabPadding(tabsList.length);
+/*      if (tabPadding >= 1) {
+        currentDelta = (((tabsList.length - 1 - maxTabsLead) /
+                    ((maxTabs - maxTabsLead) / startPadding) +
+                2)) /
+            1.5;
         oldTabPadding = tabPadding;
         tabPadding = startPadding - currentDelta;
         if (tabPadding < 0) tabPadding = 0;
         //print('add tabPadding=$tabPadding currentDelta=$currentDelta');
-      }
+      }*/
     }
 
     TabData newTabData = TabData(
       closable: closable,
       text: _calculateTitle(newTabTitle, tabsList),
-      leading: (context, status) =>
-          TabTooltipLeading(
-            tooltip: newTabTitle,
-            color: color,
-          ),
+      leading: (context, status) => TabTooltipLeading(
+        tooltip: newTabTitle,
+        color: color,
+      ),
       content: TabContent(
         content: const Icon(
           Icons.add,
@@ -245,15 +239,28 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     setState(() {});
   }
 
+  void _calculateTabPadding(int numOfTabs) {
+    if (tabPadding >= 1) {
+      currentDelta = (((numOfTabs - 1 - maxTabsLead) /
+          ((maxTabs - maxTabsLead) / startPadding) +
+          2)) /
+          1.5;
+      oldTabPadding = tabPadding;
+      tabPadding = startPadding - currentDelta;
+      if (tabPadding < 0) tabPadding = 0;
+      //print('add tabPadding=$tabPadding currentDelta=$currentDelta');
+    }
+  }
+
   void _onClose(TabData tabData) {
     _closedTabs.add(tabData);
 
     List<String> tabsList = _controller.tabs
         .map((element) => (element.content as TabContent).fullTabTitle)
         .toList();
-    for (int i = 0; i < _controller.tabs.length; i++) {//var tab in _controller.tabs) {
-      _controller.tabs[i].text =
-          _calculateTitle((_controller.tabs[i].content as TabContent).fullTabTitle, tabsList);
+    for (int i = 0; i < _controller.tabs.length; i++) {
+      _controller.tabs[i].text = _calculateTitle(
+          (_controller.tabs[i].content as TabContent).fullTabTitle, tabsList);
       //print('recalc _controller.tabs');
     }
 
@@ -264,13 +271,16 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     }
 
     if (_controller.tabs.length >= maxTabsLead) {
-      if (tabPadding >= 1) {
-        currentDelta = ( ((tabsList.length - 1 - maxTabsLead) /
-            ((maxTabs - maxTabsLead) / startPadding) +
-            2) ) / 1.5;
+      _calculateTabPadding(tabsList.length);
+/*      if (tabPadding >= 1) {
+        currentDelta = (((tabsList.length - 1 - maxTabsLead) /
+                    ((maxTabs - maxTabsLead) / startPadding) +
+                2)) /
+            1.5;
         oldTabPadding = tabPadding;
         tabPadding = startPadding - currentDelta;
-        if (tabPadding < 0) tabPadding = 0; }
+        if (tabPadding < 0) tabPadding = 0;
+      }*/
       //tabPadding = oldTabPadding;
       if (tabPadding > 10) tabPadding = 10;
       //print('delete tabPadding=$tabPadding currentDelta=$currentDelta');
@@ -337,18 +347,21 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
       //запоминаем длину заголовка вкладок
       fullTabLength = result.length;
-    } else if ((tabs.length > maxTabsLeadTextClose) ){//&&
-        //(tabs.length <= maxTabsLead)) {
+    } else if ((tabs.length > maxTabsLeadTextClose)) {
+      //&&
+      //(tabs.length <= maxTabsLead)) {
       //print('fullTabLength=$fullTabLength');
       //убирание кнопки закрытия вкладок компенсируется тем, что обрезаем
       //заголовок на 3 символа меньше
       int startLength = fullTabLength + 3;
 
-      result = _correction(title: title,
+      result = _correction(
+        title: title,
         numOfTabs: tabs.length,
         croppedLength: startLength,
         tabsWithoutCorrection: maxTabsLeadTextClose,
-        charsForCorrection: 1,);
+        charsForCorrection: 1,
+      );
       //print('result.length=${result.length}');
     }
     return result;
@@ -387,9 +400,16 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
       } else if (croppedLength == 2) {
         result = '${title.substring(0, croppedLength - 1)}.';
       } else if (croppedLength == 1) {
-        result = title.substring(0, croppedLength);
+        if (maxTabsLead - numOfTabs > 3) {
+          result = '${title.substring(0, 1)}.';
+        } else {
+        result = title.substring(0, croppedLength); }
       } else {
-        result = '';
+        if (maxTabsLead - numOfTabs > 3) {
+          result = title.substring(0, 1);
+        } else {
+          result = '';
+        }
       }
     }
 
