@@ -29,7 +29,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   //ширина меню
   double _overlayMenuWidth = 300;
 
-  //переменные, зависящие от ширины экрана (рассчитываются в функции calculateMaxTabs):
+  //переменные, зависящие от ширины области со вкладками (рассчитываются в функции calculateMaxTabs):
   //максимально возможное число вкладок
   int maxTabs = 1;
 
@@ -66,6 +66,8 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   //для запоминания длины заголовка вкладок перед тем, как с них будут убраны
   //кнопки для удаления (это произойдёт при tabs.length = maxTabsLeadTextClose)
   int fullTabLength = 0;
+
+  double parentWidthPrev = 0;
 
   @override
   void initState() {
@@ -112,45 +114,52 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
   @override
   Widget build(BuildContext context) {
-    calculateMaxTabs(MediaQuery.of(context).size.width);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('new tabbed_view'),
       ),
-      body: TabbedViewTheme(
-        data:
-            themeData(leftTabPadding: tabPadding, rightTabPadding: tabPadding),
-        child: TabbedView(
-          controller: _controller,
-          onTabSelection: (index) {
-            _onSelect(index);
-          },
-          tabsAreaButtonsBuilder: (context, tabsCount) {
-            List<TabButton> buttons = [];
-            buttons.add(
-              TabButton(
-                icon: IconProvider.data(Icons.add),
-                onPressed: () {
-                  _onAdd();
-                },
-              ),
-            );
-            buttons.add(
-              TabButton(
-                icon: IconProvider.data(Icons.keyboard_arrow_down),
-                onPressed: () {
-                  _showOverlayMenu(context);
-                },
-              ),
-            );
-            return buttons;
-          },
-          onTabClose: (index, tabData) {
-            _onClose(tabData);
-          },
-        ),
-      ),
+      body: LayoutBuilder(builder: (context, constraints) {
+        var parentWidth = constraints.maxWidth;
+        if (parentWidthPrev != parentWidth) {
+          calculateMaxTabs(parentWidth);
+          _rebuildOnChangeWidth();
+        }
+        parentWidthPrev = parentWidth;
+
+        return TabbedViewTheme(
+          data: themeData(
+              leftTabPadding: tabPadding, rightTabPadding: tabPadding),
+          child: TabbedView(
+            controller: _controller,
+            onTabSelection: (index) {
+              _onSelect(index);
+            },
+            tabsAreaButtonsBuilder: (context, tabsCount) {
+              List<TabButton> buttons = [];
+              buttons.add(
+                TabButton(
+                  icon: IconProvider.data(Icons.add),
+                  onPressed: () {
+                    _onAdd();
+                  },
+                ),
+              );
+              buttons.add(
+                TabButton(
+                  icon: IconProvider.data(Icons.keyboard_arrow_down),
+                  onPressed: () {
+                    _showOverlayMenu(context);
+                  },
+                ),
+              );
+              return buttons;
+            },
+            onTabClose: (index, tabData) {
+              _onClose(tabData);
+            },
+          ),
+        );
+      }),
     );
   }
 
@@ -168,6 +177,34 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
       for (int i = 0; i < _controller.tabs.length; i++) {
         _controller.tabs[i].closable = (i == index) ? true : false;
       }
+    }
+  }
+
+  void _rebuildOnChangeWidth() {
+    List<String> tabsList = _controller.tabs
+        .map((element) => (element.content as TabContent).fullTabTitle)
+        .toList();
+
+    //перевычисление заголовков всех вкладок
+    for (int i = 0; i < _controller.tabs.length; i++) {
+      _controller.tabs[i].text = _calculateTitle(
+          (_controller.tabs[i].content as TabContent).fullTabTitle, tabsList);
+    }
+
+    //будет ли показываться кнопка закрытия у вкладки
+    if (tabsList.length > maxTabsLeadTextClose) {
+      for (int i = 0; i < _controller.tabs.length; i++) {
+        if (i == _controller.selectedIndex) {
+          _controller.tabs[i].closable = true;
+        } else {
+          _controller.tabs[i].closable = false;
+        }
+      }
+    }
+
+    //вычисляем паддинг
+    if (_controller.tabs.length >= maxTabsLead) {
+      _calculateTabPadding(tabsList.length);
     }
   }
 
