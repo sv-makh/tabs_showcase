@@ -26,6 +26,7 @@ class OverlayMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        //закрытие оверлея по клику вне его
         ModalBarrier(
           onDismiss: () {
             closeOverlay();
@@ -74,6 +75,7 @@ class OverlayMenu extends StatelessWidget {
           ),
           const Divider(),
           OverlayTextItem(text: 'OPEN TABS'),
+          //первым в меню всегда стоит выбранная вкладка
           OverlayMenuItem(
             currentTab: true,
             menuWidth: menuWidth,
@@ -102,6 +104,7 @@ class OverlayMenu extends StatelessWidget {
             shrinkWrap: true,
             itemCount: controller.tabs.length,
             itemBuilder: (BuildContext context, int index) {
+              //показываем невыбранные вкладки
               return (index == selectedIndex)
                   ? Container()
                   : OverlayMenuItem(

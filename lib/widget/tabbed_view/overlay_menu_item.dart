@@ -28,6 +28,7 @@ class OverlayMenuItem extends StatefulWidget {
 }
 
 class _OverlayMenuItemState extends State<OverlayMenuItem> {
+  //показывать ли на данном пункте меню кнопку закрытия вкладки
   bool showTrailing = false;
 
   @override

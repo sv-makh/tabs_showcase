@@ -10,6 +10,7 @@ TabbedViewThemeData themeData({double leftTabPadding = 10, double rightTabPaddin
   Color hoverColor = const Color(0xffF0F2F4);
   Color borderColor = const Color(0xff919598);
   Color selectedColor = const Color(0xffFFFFFF);
+  Color tabsColor = const Color(0xffE8EAED);
 
   themeData.tabsArea
     ..buttonsAreaPadding = const EdgeInsets.only(right: 3)
@@ -17,7 +18,7 @@ TabbedViewThemeData themeData({double leftTabPadding = 10, double rightTabPaddin
     ..buttonPadding = const EdgeInsets.only(right: 3, left: 3, bottom: 3)
     ..border = Border(top: tabsAreaBorderSide)
     ..middleGap = 0
-    ..color = const Color(0xffE8EAED);
+    ..color = tabsColor;
 
   themeData.contentArea.decoration = BoxDecoration(color: selectedColor);
 
@@ -34,7 +35,7 @@ TabbedViewThemeData themeData({double leftTabPadding = 10, double rightTabPaddin
         right: BorderSide(color: borderColor, width: 1),
       ),
       shape: BoxShape.rectangle,
-      color: const Color(0xffE8EAED),
+      color: tabsColor,
     )
     ..selectedStatus.decoration = BoxDecoration(
         color: selectedColor, borderRadius: tabBorderRadius)
