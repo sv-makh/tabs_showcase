@@ -44,6 +44,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
   //длина вкладки с минимальными паддингами, на которой иконка
   double minLeadWidth = 20;
+  double paddindDivisor = 1.5;
 
   //длина правой области с кнопками (добавить вкладку, показать меню)
   double buttonsAreaWidth = 80;
@@ -178,9 +179,9 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     Color color =
         Colors.primaries[(tabsList.length - 1) % Colors.primaries.length];
 
-    for (var tab in _controller.tabs) {
-      tab.text =
-          _calculateTitle((tab.content as TabContent).fullTabTitle, tabsList);
+    for (int i = 0; i < _controller.tabs.length; i++) {
+      _controller.tabs[i].text = _calculateTitle(
+          (_controller.tabs[i].content as TabContent).fullTabTitle, tabsList);
     }
 
     bool closable = isTabsClosable(tabsList.length);
@@ -225,7 +226,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
       currentDelta = (((numOfTabs - 1 - maxTabsLead) /
           ((maxTabs - maxTabsLead) / startPadding) +
           2)) /
-          1.5;
+          paddindDivisor;
       oldTabPadding = tabPadding;
       tabPadding = startPadding - currentDelta;
       if (tabPadding < 0) tabPadding = 0;
