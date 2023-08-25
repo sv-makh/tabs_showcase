@@ -15,7 +15,7 @@ TabbedViewThemeData themeData({double leftTabPadding = 10, double rightTabPaddin
     ..buttonsAreaPadding = const EdgeInsets.only(right: 3)
     ..buttonIconSize = 18
     ..buttonPadding = const EdgeInsets.only(right: 3, left: 3, bottom: 3)
-    ..border = Border(top: tabsAreaBorderSide)//, bottom: tabsAreaBorderSide)
+    ..border = Border(top: tabsAreaBorderSide)
     ..middleGap = 0
     ..color = const Color(0xffE8EAED);
 

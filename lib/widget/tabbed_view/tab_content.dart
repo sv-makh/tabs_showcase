@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+//класс для содержимого вкладок
 class TabContent extends StatelessWidget {
+  //хранится полное имя вкладки - для использования при пересчёте заголовка,
+  //который будет показан
   String fullTabTitle;
   Widget content;
   Color color;

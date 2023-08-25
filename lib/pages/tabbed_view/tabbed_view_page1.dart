@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
 import 'package:tabbed_view/tabbed_view.dart';
 import 'package:tabs_showcase/widget/tabbed_view/overlay_menu.dart';
 import 'package:tabs_showcase/widget/tabbed_view/tab_content.dart';
@@ -20,45 +19,53 @@ class TabbedViewPage1 extends StatefulWidget {
 class _TabbedViewPage1State extends State<TabbedViewPage1> {
   late TabbedViewController _controller;
 
+  //массив для хранения закрытых вкладок
   List<TabData> _closedTabs = [];
 
+  //переменные для создания overlay меню
   late OverlayEntry? _overlayEntry;
   OverlayState? overlayState;
+
+  //ширина меню
   double _overlayMenuWidth = 300;
 
+  //переменные, зависящие от ширины экрана (рассчитываются в функции calculateMaxTabs):
+  //максимально возможное число вкладок
   int maxTabs = 1;
+
+  //максимальное число вкладок, на которых: иконка, 3 символа, кнопка
   int maxTabsLeadTextClose = 1;
+
+  //максимальное число вкладок, на которых только иконка
   int maxTabsLead = 1;
 
-  //примерная длина вкладки, на которой иконка, 3 символа, крестик
+  //примерная длина вкладки, на которой иконка, 3 символа, кнопка
   double leadTextCloseWidth = 80;
 
   //длина вкладки, на которой иконка, крестик
-  double leadCloseWidth = 57;
+  double minLeadCloseWidth = 57;
 
-  //длина вкладки с минимальными паддингами, на которой иконка
-  double minLeadCloseWidth = 48;
-
-  //длина вкладки, на которой иконка
+  //длина вкладки, на которой только иконка
   double leadWidth = 35;
 
-  //длина вкладки с минимальными паддингами, на которой иконка
+  //длина вкладки с минимальными паддингами, на которой только иконка
   double minLeadWidth = 20;
-  double paddindDivisor = 1.5;
 
-  //длина правой области с кнопками (добавить вкладку, показать меню)
+  //длина правой области с кнопками (кнопки Добавить вкладку, Показать меню)
   double buttonsAreaWidth = 80;
 
-  //паддинг у вкладки
+  //параметр themeData.tab.padding - паддинг у вкладки
   double tabPadding = 10;
 
   //изначальный паддинг
   double startPadding = 10;
-  double oldTabPadding = 0;
 
-  double currentDelta = 0;
-
+  //флаг для первоначального заполнение области со вкладками
   bool tabsInitializing = true;
+
+  //для запоминания длины заголовка вкладок перед тем, как с них будут убраны
+  //кнопки для удаления (это произойдёт при tabs.length = maxTabsLeadTextClose)
+  int fullTabLength = 0;
 
   @override
   void initState() {
@@ -68,6 +75,10 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     tabsInitializing = false;
   }
 
+  //первоначальное заполнение области со вкладками
+  //при расчёте длины заголовков вкладок предполагаем, что
+  //вкладок не настолько много, что потребуется убирать кнопку закрытия
+  //или уменьшать паддинг на вкладке
   List<TabData> initTabs(List<String> tabTitles, List<Widget> tabViews) {
     tabsInitializing = true;
     List<TabData> tabs = [];
@@ -105,7 +116,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('new tabbed_view'),
+        title: const Text('new tabbed_view'),
       ),
       body: TabbedViewTheme(
         data:
@@ -148,17 +159,8 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     double tabsAreaWidth = tabViewWidth - buttonsAreaWidth;
 
     maxTabs = (tabsAreaWidth - minLeadCloseWidth) ~/ minLeadWidth + 1;
-    maxTabsLead = (tabsAreaWidth - leadCloseWidth) ~/ leadWidth + 1;
+    maxTabsLead = (tabsAreaWidth - minLeadCloseWidth) ~/ leadWidth + 1;
     maxTabsLeadTextClose = tabsAreaWidth ~/ leadTextCloseWidth;
-
-  }
-
-  bool isTabsClosable(int numOfTabs) {
-    bool closable = true;
-    if ((numOfTabs > maxTabsLeadTextClose)) {
-      closable = false;
-    }
-    return closable;
   }
 
   void _onSelect(int? index) {
@@ -170,6 +172,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   }
 
   void _onAdd() {
+    //вычисление заполнения новой вкладки
     List<String> tabsList = _controller.tabs
         .map((element) => (element.content as TabContent).fullTabTitle)
         .toList();
@@ -179,13 +182,19 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     Color color =
         Colors.primaries[(tabsList.length - 1) % Colors.primaries.length];
 
+    //перевычисление заголовков всех вкладок
     for (int i = 0; i < _controller.tabs.length; i++) {
       _controller.tabs[i].text = _calculateTitle(
           (_controller.tabs[i].content as TabContent).fullTabTitle, tabsList);
     }
 
-    bool closable = isTabsClosable(tabsList.length);
-    if (closable == false) {
+    //будет ли показываться кнопка закрытия у вкладки
+    bool closable = true;
+
+    if (tabsList.length > maxTabsLeadTextClose) {
+      closable = false;
+      //если после добавления вкладки оказалось, что кнопки закрытия больше
+      //не будут показываься, нужно убрать их у всех вкладок кроме выбранной
       for (int i = 0; i < _controller.tabs.length; i++) {
         if (i == _controller.selectedIndex) {
           _controller.tabs[i].closable = true;
@@ -195,6 +204,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
       }
     }
 
+    //при дальнейшем добавлении вкладок уменьшаем их паддинг
     if (_controller.tabs.length >= maxTabsLead) {
       _calculateTabPadding(tabsList.length);
     }
@@ -216,18 +226,19 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
       ),
     );
 
+    //вкладок можно добавить только ограниченное число
     if (tabsList.length - 1 < maxTabs) _controller.addTab(newTabData);
 
     setState(() {});
   }
 
+  //вычисление паддинга вкладок
   void _calculateTabPadding(int numOfTabs) {
     if (tabPadding >= 1) {
-      currentDelta = (((numOfTabs - 1 - maxTabsLead) /
-          ((maxTabs - maxTabsLead) / startPadding) +
-          2)) /
-          paddindDivisor;
-      oldTabPadding = tabPadding;
+      var currentDelta = (((numOfTabs - 1 - maxTabsLead) /
+                  ((maxTabs - maxTabsLead) / startPadding) +
+              2)) /
+          1.5;
       tabPadding = startPadding - currentDelta;
       if (tabPadding < 0) tabPadding = 0;
     }
@@ -239,24 +250,30 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     List<String> tabsList = _controller.tabs
         .map((element) => (element.content as TabContent).fullTabTitle)
         .toList();
+    //перевычисление заголовков всех вкладок
     for (int i = 0; i < _controller.tabs.length; i++) {
       _controller.tabs[i].text = _calculateTitle(
           (_controller.tabs[i].content as TabContent).fullTabTitle, tabsList);
     }
 
+    //при уменьшении количества вкладок нужно показывать кнопку закрытия на всех
     if (_controller.tabs.length <= maxTabsLeadTextClose) {
       for (int i = 0; i < _controller.tabs.length; i++) {
         _controller.tabs[i].closable = true;
       }
     }
 
+    //вычисление паддинга вкладок
     if (_controller.tabs.length >= maxTabsLead) {
       _calculateTabPadding(tabsList.length);
       if (tabPadding > 10) tabPadding = 10;
     }
 
-    if (_controller.tabs.isNotEmpty) _controller.selectedIndex = 0;
-    _controller.tabs[0].closable = true;
+    //после удаления любой вкладки выбранной становится первая
+    if (_controller.tabs.isNotEmpty) {
+      _controller.selectedIndex = 0;
+      _controller.tabs[0].closable = true;
+    }
 
     setState(() {});
   }
@@ -276,7 +293,6 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
           rebuildOverlay: () {
             _rebuildOverlayMenu();
           },
-          maxTabs: maxTabs,
         );
       },
     );
@@ -294,10 +310,6 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     _overlayEntry!.markNeedsBuild();
   }
 
-  //для запоминания длины заголовка вкладок перед тем, как с них будут убраны
-  //кнопки для удаления (это произойдёт при tabs.length = maxTabsLeadTextClose)
-  int fullTabLength = 0;
-
   //возвращаем заголовок для вкладки
   String _calculateTitle(String title, List<String> tabs) {
     int median = _calculateMedian(tabs);
@@ -306,16 +318,18 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     if ((tabs.length <= maxTabsLeadTextClose) || tabsInitializing) {
       //уменьшение размера заголовка
       result = _correction(
-          title: title,
-          numOfTabs: tabs.length,
-          croppedLength: median,
-          tabsWithoutCorrection: 5,
-          charsForCorrection: 2);
+        title: title,
+        numOfTabs: tabs.length,
+        croppedLength: median,
+        tabsWithoutCorrection: 5,
+        charsForCorrection: 2,
+      );
 
       //запоминаем длину заголовка вкладок
       fullTabLength = result.length;
-    } else if ((tabs.length > maxTabsLeadTextClose)) {
-      //убирание кнопки закрытия вкладок компенсируется тем, что обрезаем
+    } else {
+      //при tabs.length > maxTabsLeadTextClose убирается кнопка закрытия на вкладках
+      //убирание кнопки компенсируется тем, что обрезаем
       //заголовок на 3 символа меньше
       int startLength = fullTabLength + 3;
 
@@ -361,10 +375,14 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
       } else if (croppedLength == 2) {
         result = '${title.substring(0, croppedLength - 1)}.';
       } else if (croppedLength == 1) {
+        //если до момента, когда на вкладках не должно остаться текста
+        //ещё достаточно далеко, а рассчитанная длина уже стала короткой,
+        //возвращаем более длинную строку
         if (maxTabsLead - numOfTabs > 3) {
           result = '${title.substring(0, 1)}.';
         } else {
-        result = title.substring(0, croppedLength); }
+          result = title.substring(0, croppedLength);
+        }
       } else {
         if (maxTabsLead - numOfTabs > 3) {
           result = title.substring(0, 1);

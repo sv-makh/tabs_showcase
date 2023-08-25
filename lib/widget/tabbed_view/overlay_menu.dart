@@ -11,7 +11,6 @@ class OverlayMenu extends StatelessWidget {
   void Function(TabData) closeTab;
   VoidCallback closeOverlay;
   VoidCallback rebuildOverlay;
-  int maxTabs;
 
   OverlayMenu({
     super.key,
@@ -21,7 +20,6 @@ class OverlayMenu extends StatelessWidget {
     required this.closeTab,
     required this.closeOverlay,
     required this.rebuildOverlay,
-    required this.maxTabs,
   });
 
   @override
