@@ -40,7 +40,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   double minLeadCloseWidth = 48;
 
   //длина вкладки, на которой иконка
-  double leadWidth = 31;
+  double leadWidth = 35;
 
   //длина вкладки с минимальными паддингами, на которой иконка
   double minLeadWidth = 20;
@@ -171,11 +171,11 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   }
 
   void _onSelect(int? index) {
-/*    if ((index != null) && (_controller.tabs.length > maxTabsLeadClose)) {
+    if ((index != null) && (_controller.tabs.length > maxTabsLeadTextClose)) {
       for (int i = 0; i < _controller.tabs.length; i++) {
         _controller.tabs[i].closable = (i == index) ? true : false;
       }
-    }*/
+    }
   }
 
   void _onAdd() {
@@ -237,6 +237,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     );
 
     if (tabsList.length - 1 < maxTabs) _controller.addTab(newTabData);
+    //print('num of tabs ${_controller.tabs.length}');
 
     setState(() {});
   }
@@ -252,11 +253,11 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
           _calculateTitle((tab.content as TabContent).fullTabTitle, tabsList);
     }
 
-/*    if (_controller.tabs.length <= maxTabsLeadClose) {
+    if (_controller.tabs.length <= maxTabsLeadTextClose) {
       for (int i = 0; i < _controller.tabs.length; i++) {
         _controller.tabs[i].closable = true;
       }
-    }*/
+    }
 
 /*    if (_controller.tabs.length >= maxTabsLead) {
       tabPadding = oldTabPadding;
@@ -308,6 +309,7 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
   //возвращаем заголовок для вкладки
   String _calculateTitle(String title, List<String> tabs) {
     int median = _calculateMedian(tabs);
+    print('median=$median');
     String result = '';
 
     if ((tabs.length <= maxTabsLeadTextClose) || tabsInitializing) {
@@ -318,18 +320,18 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
           numOfTabs: tabs.length,
           croppedLength: median,
           tabsWithoutCorrection: 5,
-          charsForCorrection: 1);
+          charsForCorrection: 2);
 
       fullTabLength = result.length;
     } else if ((tabs.length > maxTabsLeadTextClose) &&
         (tabs.length <= maxTabsLeadText)) {
       print('fullTabLength=$fullTabLength');
-      int startLength = fullTabLength + 2;
+      int startLength = fullTabLength + 3;
 
       result = _correction(title: title,
         numOfTabs: tabs.length,
         croppedLength: startLength,
-        tabsWithoutCorrection: 0,
+        tabsWithoutCorrection: maxTabsLeadTextClose,
         charsForCorrection: 1,);
     }
     return result;
@@ -343,9 +345,10 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
     required int charsForCorrection,
   }) {
     String result = '';
+    int correction = 0;
 
     if (numOfTabs >= tabsWithoutCorrection) {
-      int correction = charsForCorrection * (numOfTabs - tabsWithoutCorrection);
+      correction = charsForCorrection * (numOfTabs - tabsWithoutCorrection);
       if ((croppedLength - correction) >= 0) {
         croppedLength -= correction;
       } else {
@@ -353,17 +356,17 @@ class _TabbedViewPage1State extends State<TabbedViewPage1> {
       }
     }
 
-    print('tabs.length=${numOfTabs} croppedLength=$croppedLength');
+    print('charsForCorrection=$charsForCorrection numOfTabs=${numOfTabs} tabsWithoutCorrection=$tabsWithoutCorrection correction=$correction croppedLength=$croppedLength');
 
     if (title.length <= croppedLength) {
       result = title.padRight(croppedLength - title.length);
     } else {
       if (croppedLength >= 3) {
-        result = '${title.substring(0, croppedLength - 3)}...';
+        result = '${title.substring(0, croppedLength - 2)}..';
       } else if (croppedLength == 2) {
-        result = '..';
+        result = '${title.substring(0, croppedLength - 1)}.';
       } else if (croppedLength == 1) {
-        result = '.';
+        result = title.substring(0, croppedLength);
       } else {
         result = '';
       }
